@@ -1,7 +1,9 @@
-import theading
+import threading
 
-thread_local_data = threading.local()
+_thread_local = threading.local()
+
+from vishnu.session import Session
 
 def get_session():
     """Returns the session for the current request"""
-    return thread_local_data.session
+    return _thread_local.session

@@ -1,9 +1,24 @@
+import threading
+
+from vishnu import _thread_local
+from vishnu.session import Session
+
 class SessionMiddleware(object):
     """WSGI middleware for adding support for sessions.
     """
 
-    def __init__(self, app):
+    def __init__(self, app, secure=False, timeout=None):
         self.app = app
+        self.secure = secure
+        self.timeout = timeout
 
     def __call__(self, environ, start_response):
-        return self.app(environ, start_response)
+
+        _thread_local.session = Session(secure=self.secure, timeout=self.timeout)
+
+        def vishnu_start_response(status, headers, exc_info=None):
+            for header in _thread_local.session.headers():
+                headers.append(("Set-Cookie", header))
+            return start_response(status, headers, exc_info)
+
+        return self.app(environ, vishnu_start_response)
