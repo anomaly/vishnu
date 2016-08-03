@@ -6,11 +6,13 @@ from base64 import b64decode, b64encode
 import hashlib
 import hmac
 import logging
+import pickle
 import os
 import uuid
 
 class SavedSession(ndb.Model):
     expires = ndb.DateTimeProperty(required=False)
+    data = ndb.PickleProperty(required=True, compressed=True)
 
 COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
@@ -19,9 +21,11 @@ SID_LENGTH = 32
 class Session(object):
 
     def __init__(self):
-        self._needs_save = False
+        self._send_cookie = False
         self._data = {}
         self._sid = uuid.uuid4().hex
+        self._model = None
+        self._loaded = False
 
         #try to fetch the default values for this session
 
@@ -39,6 +43,12 @@ class Session(object):
             self._http_only = True
         else:
             self._http_only = http_only == "True"
+
+        auto_save = os.environ.get("VISHNU_AUTO_SAVE")
+        if auto_save is None:
+            self._auto_save = False
+        else:
+            self._auto_save = auto_save == "True"
 
         timeout = os.environ.get("VISHNU_TIMEOUT")
         if timeout is not None:
@@ -68,14 +78,18 @@ class Session(object):
         received_sid = Session.decode_sid(self._secret, cookie_value)
         if received_sid:
             self._sid = received_sid
-            self._needs_save = False
+            self._send_cookie = True
         else:
             logging.warn("found cookie with invalid signature")
 
     def headers(self):
         headers = []
 
-        if self._needs_save:
+        if self._send_cookie:
+            logging.error("sending cookie")
+            logging.error(self._data)
+            logging.error(self._secure)
+            logging.error(self._http_only)
 
             cookie_value = Session.encode_sid(self._secret, self._sid)
 
@@ -94,10 +108,12 @@ class Session(object):
 
         return headers
 
-    def encrypt_data(self, data):
+    @classmethod
+    def encrypt_cookie_value(cls, secret, cookie_value):
         pass
 
-    def decrypt_data(self, data):
+    @classmethod
+    def decrypt_cookie_value(cls, secret, cookie_value):
         pass
 
     @classmethod
@@ -138,14 +154,39 @@ class Session(object):
         
         return cookie_sid
 
-    def start(self):
-        self._needs_save = True
+    def _load_data(self):
+        #load the persistent model on first access
+        if self._model is None and not self._loaded:
+            self._model = ndb.Key(SavedSession, self._sid).get()
+            self._loaded = True
+            if self._model:
+                self._data = self._model.data
 
-    def end(self):
-        pass
+    def start(self):
+        """Starts a new session."""
+        self._data = {}
+
+    def save(self):
+
+        #try to find an existing session
+        self._model = ndb.Key(SavedSession, self._sid).get()
+        if self._model is None:
+            self._model = SavedSession(id=self._sid)
+        self._model.data = self._data
+        self._model.put()
+
+        self._send_cookie = True
+
+    def terminate(self):
+        self._data = {}
 
     def get(self, key):
+        self._load_data()
         return self._data.get(key)
 
     def __setitem__(self, key, value):
+        self._load_data()
+
+        if self._auto_save:
+            self.save()
         self._data[key] = value
