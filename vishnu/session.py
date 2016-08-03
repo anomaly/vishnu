@@ -19,7 +19,7 @@ SID_LENGTH = 32
 class Session(object):
 
     def __init__(self):
-        self._needs_save = True
+        self._needs_save = False
         self._data = {}
         self._sid = uuid.uuid4().hex
 
