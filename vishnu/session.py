@@ -109,6 +109,17 @@ class Session(object):
         return "%s%s" % (sig, sid)
 
     @classmethod
+    def is_signature_equal(a, b):
+        """Compares two signatures using a constant time algorithim to avoid timing attacks."""
+        if len(a) != len(b):
+            return False
+
+        invalid_bits = 0
+        for x, y in zip(a, b):
+            invalid_bits |= x ^ y
+        return invalid_bits == 0
+
+    @classmethod
     def decode_sid(self, secret, cookie_value):
         """
         Decodes a cookie value and returns the sid if value or None if invalid.
@@ -121,8 +132,7 @@ class Session(object):
         cookie_sid = cookie_value[SIG_LENGTH:]
         actual_sig = hmac.new(secret, cookie_sid, hashlib.sha512).hexdigest()
 
-        #@todo: avoid timing attacks
-        if cookie_sig != actual_sig:
+        if not Session.is_signature_equal(cookie_sig, actual_sig):
             return None
         
         return cookie_sid
