@@ -4,17 +4,14 @@ from vishnu import _thread_local
 from vishnu.session import Session
 
 class SessionMiddleware(object):
-    """WSGI middleware for adding support for sessions.
-    """
+    """WSGI middleware for adding support for sessions."""
 
-    def __init__(self, app, secure=False, timeout=None):
+    def __init__(self, app):
         self.app = app
-        self.secure = secure
-        self.timeout = timeout
 
     def __call__(self, environ, start_response):
 
-        _thread_local.session = Session(secure=self.secure, timeout=self.timeout)
+        _thread_local.session = Session()
 
         def vishnu_start_response(status, headers, exc_info=None):
             for header in _thread_local.session.headers():
