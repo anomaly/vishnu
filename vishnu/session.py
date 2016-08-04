@@ -16,7 +16,7 @@ class VishnuSession(ndb.Model):
     expires = ndb.DateTimeProperty(required=False)
     data = ndb.PickleProperty(required=True, compressed=True)
 
-COOKIE_NAME = "vishnu"
+DEFAULT_COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
@@ -33,6 +33,12 @@ class Session(object):
         self._loaded = False
 
         #try to fetch the default values for this session
+        #cookie name
+        cookie_name = os.environ.get("VISHNU_COOKIE_NAME")
+        if cookie_name is None:
+            self._cookie_name = DEFAULT_COOKIE_NAME
+        else:
+            self._cookie_name = cookie_name
 
         #secret
         self._secret = os.environ.get("VISHNU_SECRET")
@@ -117,7 +123,7 @@ class Session(object):
     def _load_cookie(self):
 
         cookie = SimpleCookie(os.environ.get('HTTP_COOKIE'))
-        vishnu_keys = filter(lambda key: key == COOKIE_NAME, cookie.keys())
+        vishnu_keys = filter(lambda key: key == self._cookie_name, cookie.keys())
         
         #no session was started yet
         if not vishnu_keys:
@@ -137,7 +143,7 @@ class Session(object):
             cookie_value = Session.encode_sid(self._secret, self._sid)
             #@todo: encrypt
 
-            header = "vishnu=%s;" % cookie_value
+            header = "%s=%s;" % (self._cookie_name, cookie_value)
 
             if self._domain:
                 header += " Domain=%s;" % self._domain
