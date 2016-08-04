@@ -2,7 +2,7 @@ from google.appengine.ext import ndb
 
 from  Cookie import SimpleCookie
 
-from base64 import b64decode, b64encode
+from datetime import datetime, timedelta
 import hashlib
 import hmac
 import logging
@@ -10,13 +10,14 @@ import pickle
 import os
 import uuid
 
-class SavedSession(ndb.Model):
+class VishnuSession(ndb.Model):
     expires = ndb.DateTimeProperty(required=False)
     data = ndb.PickleProperty(required=True, compressed=True)
 
 COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
+EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
 class Session(object):
 
@@ -80,11 +81,29 @@ class Session(object):
 
             if self._timeout < 0:
                 raise TypeError("VISHNU_TIMEOUT must be a non-negative integer")
+
+            #calculate the expiry date
+            self._calculate_expires()
         else:
             self._timeout = None
 
         #attempt to load an existing cookie
         self._load_cookie()
+
+    @property
+    def timeout(self):
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self._timeout = value
+        self._calculate_expires()
+
+    def _calculate_expires(self):
+        self._expires = None
+
+        now = datetime.now()
+        self._expires = now + timedelta(seconds=self._timeout)
 
     def _load_cookie(self):
 
@@ -120,6 +139,9 @@ class Session(object):
             #expire the cookie
             if self._expire_cookie:
                 header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
+            #set the cookie expiry
+            elif self._timeout:
+                header += " Expires=%s" % self._expires.strftime(EXPIRES_FORMAT)
 
             if self._secure:
                 header += " Secure;"
@@ -179,7 +201,7 @@ class Session(object):
     def _load_data(self):
         #load the persistent model on first access
         if self._model is None and not self._loaded:
-            self._model = ndb.Key(SavedSession, self._sid).get()
+            self._model = ndb.Key(VishnuSession, self._sid).get()
             self._loaded = True
             if self._model:
                 self._data = self._model.data
@@ -197,10 +219,12 @@ class Session(object):
     def save(self):
 
         #try to find an existing session
-        self._model = ndb.Key(SavedSession, self._sid).get()
+        self._model = ndb.Key(VishnuSession, self._sid).get()
         if self._model is None:
-            self._model = SavedSession(id=self._sid)
+            self._model = VishnuSession(id=self._sid)
         self._model.data = self._data
+        if self._expires:
+            self._model.expires = self._expires
         self._model.put()
 
         self._send_cookie = True
