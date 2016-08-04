@@ -31,27 +31,46 @@ class Session(object):
 
         #try to fetch the default values for this session
 
+        #secret
         self._secret = os.environ.get("VISHNU_SECRET")
         #error if secret missing
 
+        #secure
         secure = os.environ.get("VISHNU_SECURE")
         if secure is None:
             self._secure = True
         else:
             self._secure = secure == "True"
 
+        #domain
+        domain = os.environ.get("VISHNU_DOMAIN")
+        if domain is None:
+            self._domain = None
+        else:
+            self._domain = domain
+
+        #path
+        path = os.environ.get("VISHNU_PATH")
+        if path is None:
+            self._path = "/"
+        else:
+            self._path = path
+
+        #http only
         http_only = os.environ.get("VISHNU_HTTP_ONLY")
         if http_only is None:
             self._http_only = True
         else:
             self._http_only = http_only == "True"
 
+        #auto save
         auto_save = os.environ.get("VISHNU_AUTO_SAVE")
         if auto_save is None:
             self._auto_save = False
         else:
             self._auto_save = auto_save == "True"
 
+        #timeout
         timeout = os.environ.get("VISHNU_TIMEOUT")
         if timeout is not None:
             try:
@@ -83,19 +102,20 @@ class Session(object):
         else:
             logging.warn("found cookie with invalid signature")
 
-    def headers(self):
-        headers = []
+    def header(self):
 
         if self._send_cookie:
-            logging.error("sending cookie")
-            logging.error(self._data)
-            logging.error(self._secure)
-            logging.error(self._http_only)
 
             cookie_value = Session.encode_sid(self._secret, self._sid)
             #@todo: encrypt
 
-            header = "vishnu=%s; Path=/;" % cookie_value
+            header = "vishnu=%s;" % cookie_value
+
+            if self._domain:
+                header += " Domain=%s;" % self._domain
+
+            if self._path:
+                header += " Path=%s;" % self._path
 
             #expire the cookie
             if self._expire_cookie:
@@ -106,12 +126,9 @@ class Session(object):
             if self._http_only:
                 header += " HttpOnly"
 
-            if header:
-                headers.append(header)
-
-            #no timeout means this cookie is session only
-
-        return headers
+            return header
+        else:
+            return None
 
     @classmethod
     def encrypt_cookie_value(cls, secret, cookie_value):
