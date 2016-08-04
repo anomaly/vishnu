@@ -1,5 +1,7 @@
 from google.appengine.ext import ndb
 
+import vishnu
+
 from  Cookie import SimpleCookie
 
 from datetime import datetime, timedelta
@@ -18,7 +20,6 @@ COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
-TIMEOUT_SESSION = "timeout_session" #constant used for specifying this cookie should expire at the end of the session
 
 class Session(object):
 
@@ -100,7 +101,7 @@ class Session(object):
     def timeout(self, value):
         """Sets a custom timeout value for this session"""
 
-        if value == TIMEOUT_SESSION:
+        if value == vishnu.TIMEOUT_SESSION:
             self._timeout = None
             self._expires = None
         else:
@@ -149,7 +150,7 @@ class Session(object):
                 header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
             #set the cookie expiry
             elif self._timeout:
-                header += " Expires=%s" % self._expires.strftime(EXPIRES_FORMAT)
+                header += " Expires=%s;" % self._expires.strftime(EXPIRES_FORMAT)
 
             if self._secure:
                 header += " Secure;"
