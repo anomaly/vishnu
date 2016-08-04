@@ -18,6 +18,7 @@ COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
+TIMEOUT_SESSION = "timeout_session" #constant used for specifying this cookie should expire at the end of the session
 
 class Session(object):
 
@@ -86,6 +87,7 @@ class Session(object):
             self._calculate_expires()
         else:
             self._timeout = None
+            self._expires = None
 
         #attempt to load an existing cookie
         self._load_cookie()
@@ -96,8 +98,14 @@ class Session(object):
 
     @timeout.setter
     def timeout(self, value):
-        self._timeout = value
-        self._calculate_expires()
+        """Sets a custom timeout value for this session"""
+
+        if value == TIMEOUT_SESSION:
+            self._timeout = None
+            self._expires = None
+        else:
+            self._timeout = value
+            self._calculate_expires()
 
     def _calculate_expires(self):
         self._expires = None
