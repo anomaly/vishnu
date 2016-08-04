@@ -78,7 +78,6 @@ class Session(object):
         received_sid = Session.decode_sid(self._secret, cookie_value)
         if received_sid:
             self._sid = received_sid
-            self._send_cookie = True
         else:
             logging.warn("found cookie with invalid signature")
 
@@ -92,10 +91,9 @@ class Session(object):
             logging.error(self._http_only)
 
             cookie_value = Session.encode_sid(self._secret, self._sid)
-
             #@todo: encrypt
 
-            header = "vishnu=%s;" % cookie_value
+            header = "vishnu=%s; Path=/;" % cookie_value
             if self._secure:
                 header += " Secure;"
             if self._http_only:
@@ -162,6 +160,12 @@ class Session(object):
             if self._model:
                 self._data = self._model.data
 
+    def _clear_data(self):
+        self._load_data()
+        if self._model:
+            self._model.key.delete()
+            self._model = None
+
     def start(self):
         """Starts a new session."""
         self._data = {}
@@ -178,7 +182,9 @@ class Session(object):
         self._send_cookie = True
 
     def terminate(self):
+        """Terminates an active session"""
         self._data = {}
+        self._clear_data()
 
     def get(self, key):
         self._load_data()

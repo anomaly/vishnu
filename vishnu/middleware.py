@@ -14,10 +14,10 @@ class SessionMiddleware(object):
         _thread_local.session = Session()
 
         def vishnu_start_response(status, headers, exc_info=None):
+ 
             for header in _thread_local.session.headers():
                 headers.append(("Set-Cookie", header))
-                import logging
-                logging.error("sending a cookie header")
+
             return start_response(status, headers, exc_info)
 
         return self.app(environ, vishnu_start_response)
