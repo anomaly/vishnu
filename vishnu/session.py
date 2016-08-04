@@ -22,6 +22,8 @@ class Session(object):
 
     def __init__(self):
         self._send_cookie = False
+        self._expire_cookie = False
+
         self._data = {}
         self._sid = uuid.uuid4().hex
         self._model = None
@@ -94,6 +96,11 @@ class Session(object):
             #@todo: encrypt
 
             header = "vishnu=%s; Path=/;" % cookie_value
+
+            #expire the cookie
+            if self._expire_cookie:
+                header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
+
             if self._secure:
                 header += " Secure;"
             if self._http_only:
@@ -185,6 +192,8 @@ class Session(object):
         """Terminates an active session"""
         self._data = {}
         self._clear_data()
+        self._expire_cookie = True
+        self._send_cookie = True
 
     def get(self, key):
         self._load_data()
