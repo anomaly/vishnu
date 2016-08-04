@@ -22,7 +22,7 @@ Vishnu will automatically look for and use the following variables from your `ap
 
 | name | required | default | description |
 | ---- | -------- | ------- | ----------- |
-| `VISHNU_COOKIE_NAME` | `vishnu` | The name to use for the cookie. If omitted it wull default to `vishnu`. |
+| `VISHNU_COOKIE_NAME` | no |  `vishnu` | The name to use for the cookie. If omitted it wull default to `vishnu`. |
 | `VISHNU_SECRET` | yes | N/A | secret |
 | `VISHNU_DOMAIN` | no | N/A | The domain to set the cookie for. If omitted it will default to the domain the cookie was served from. |
 | `VISHNU_PATH` | no | `/` | The path to set the cookie for. If omitted it will default to `/`. |
