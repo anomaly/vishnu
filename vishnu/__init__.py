@@ -1,8 +1,11 @@
+"""
+Vishnu: A session library for the python runtime of Google App Engine.
+"""
+from __future__ import absolute_import
+
 import threading
 
-TIMEOUT_SESSION = "timeout_session" #constant used for specifying this cookie should expire at the end of the session
-
-_thread_local = threading.local()
+_thread_local = threading.local() # pylint: disable=C0103
 _thread_local.session = None
 
 from vishnu.session import Session

@@ -1,6 +1,10 @@
-from google.appengine.ext import ndb
+"""
+Vishnu session.
+"""
 
-import vishnu
+from __future__ import absolute_import
+
+from google.appengine.ext import ndb
 
 from  Cookie import SimpleCookie
 
@@ -8,22 +12,27 @@ from datetime import datetime, timedelta
 import hashlib
 import hmac
 import logging
-import pickle
 import os
 import uuid
 
-class VishnuSession(ndb.Model):
+class VishnuSession(ndb.Model): #pylint: disable=R0903, W0232
+    """NDB model for storing session"""
     expires = ndb.DateTimeProperty(required=False)
     data = ndb.PickleProperty(required=True, compressed=True)
+
+#constant used for specifying this cookie should expire at the end of the session
+TIMEOUT_SESSION = "timeout_session"
 
 DEFAULT_COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
-class Session(object):
 
-    def __init__(self):
+class Session(object): #pylint: disable=R0902, R0904
+    """The vishnu session object."""
+
+    def __init__(self): #pylint: disable=R0912, R0915
         self._send_cookie = False
         self._expire_cookie = False
 
@@ -101,13 +110,14 @@ class Session(object):
 
     @property
     def timeout(self):
+        """Fetch the current timeout value for this session"""
         return self._timeout
 
     @timeout.setter
     def timeout(self, value):
         """Sets a custom timeout value for this session"""
 
-        if value == vishnu.TIMEOUT_SESSION:
+        if value == TIMEOUT_SESSION:
             self._timeout = None
             self._expires = None
         else:
@@ -115,16 +125,18 @@ class Session(object):
             self._calculate_expires()
 
     def _calculate_expires(self):
+        """Calculates the session expiry using the timeout"""
         self._expires = None
 
         now = datetime.now()
         self._expires = now + timedelta(seconds=self._timeout)
 
     def _load_cookie(self):
+        """Loads HTTP Cookie from environ"""
 
         cookie = SimpleCookie(os.environ.get('HTTP_COOKIE'))
-        vishnu_keys = filter(lambda key: key == self._cookie_name, cookie.keys())
-        
+        vishnu_keys = [key for key in cookie.keys() if key == self._cookie_name]
+
         #no session was started yet
         if not vishnu_keys:
             return
@@ -137,6 +149,7 @@ class Session(object):
             logging.warn("found cookie with invalid signature")
 
     def header(self):
+        """Generates HTTP header for this cookie."""
 
         if self._send_cookie:
 
@@ -169,37 +182,35 @@ class Session(object):
 
     @classmethod
     def encrypt_cookie_value(cls, secret, cookie_value):
+        """Encrypts the given cookie value."""
         pass
 
     @classmethod
     def decrypt_cookie_value(cls, secret, cookie_value):
+        """Decrypts the given cookie value."""
         pass
 
     @classmethod
     def encode_sid(cls, secret, sid):
-        """
-        Computes the HMAC for the given session id.
-        """
+        """Computes the HMAC for the given session id."""
         sig = hmac.new(secret, sid, hashlib.sha512).hexdigest()
         return "%s%s" % (sig, sid)
 
     @classmethod
-    def is_signature_equal(cls, a, b):
+    def is_signature_equal(cls, sig_a, sig_b):
         """Compares two signatures using a constant time algorithim to avoid timing attacks."""
-        if len(a) != len(b):
+        if len(sig_a) != len(sig_b):
             return False
 
         invalid_chars = 0
-        for x, y in zip(a, b):
-            if x != y:
+        for char_a, char_b in zip(sig_a, sig_b):
+            if char_a != char_b:
                 invalid_chars += 1
         return invalid_chars == 0
 
     @classmethod
     def decode_sid(cls, secret, cookie_value):
-        """
-        Decodes a cookie value and returns the sid if value or None if invalid.
-        """
+        """Decodes a cookie value and returns the sid if value or None if invalid."""
         if len(cookie_value) > SIG_LENGTH + SID_LENGTH:
             logging.warn("cookie value is incorrect length")
             return None
@@ -210,10 +221,11 @@ class Session(object):
 
         if not Session.is_signature_equal(cookie_sig, actual_sig):
             return None
-        
+
         return cookie_sid
 
     def _load_data(self):
+        """Loads data dict from NDB datastore."""
         #load the persistent model on first access
         if self._model is None and not self._loaded:
             self._model = ndb.Key(VishnuSession, self._sid).get()
@@ -222,6 +234,7 @@ class Session(object):
                 self._data = self._model.data
 
     def _clear_data(self):
+        """Deletes session from NDB datastore."""
         self._load_data()
         if self._model:
             self._model.key.delete()
@@ -232,6 +245,7 @@ class Session(object):
         self._data = {}
 
     def save(self):
+        """Saves session to persisten storage (NDB datastore)."""
 
         #try to find an existing session
         self._model = ndb.Key(VishnuSession, self._sid).get()
@@ -252,10 +266,12 @@ class Session(object):
         self._send_cookie = True
 
     def get(self, key):
+        """Retrieve a value from the session dictionary"""
         self._load_data()
         return self._data.get(key)
 
     def __setitem__(self, key, value):
+        """Set a value in the session dictionary"""
         self._load_data()
 
         if self._auto_save:
