@@ -15,6 +15,8 @@ import logging
 import os
 import uuid
 
+from vishnu.cipher import AESCipher
+
 class VishnuSession(ndb.Model): #pylint: disable=R0903, W0232
     """NDB model for storing session"""
     expires = ndb.DateTimeProperty(required=False)
@@ -151,6 +153,9 @@ class Session(object): #pylint: disable=R0902, R0904
             return
 
         cookie_value = cookie[vishnu_keys[0]].value
+        if self._encrypt_key:
+            cipher = AESCipher(self._encrypt_key)
+            cookie_value = cipher.decrypt(cookie_value)
         received_sid = Session.decode_sid(self._secret, cookie_value)
         if received_sid:
             self._sid = received_sid
@@ -163,7 +168,9 @@ class Session(object): #pylint: disable=R0902, R0904
         if self._send_cookie:
 
             cookie_value = Session.encode_sid(self._secret, self._sid)
-            #@todo: encrypt
+            if self._encrypt_key:
+                cipher = AESCipher(self._encrypt_key)
+                cookie_value = cipher.encrypt(cookie_value)
 
             header = "%s=%s;" % (self._cookie_name, cookie_value)
 
@@ -188,16 +195,6 @@ class Session(object): #pylint: disable=R0902, R0904
             return header
         else:
             return None
-
-    @classmethod
-    def encrypt_cookie_value(cls, secret, cookie_value):
-        """Encrypts the given cookie value."""
-        pass
-
-    @classmethod
-    def decrypt_cookie_value(cls, secret, cookie_value):
-        """Decrypts the given cookie value."""
-        pass
 
     @classmethod
     def encode_sid(cls, secret, sid):
