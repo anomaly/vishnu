@@ -18,6 +18,10 @@ class SessionMiddleware(object): #pylint: disable=R0903
 
         def vishnu_start_response(status, headers, exc_info=None):
             """Our start_response wrapper so we can insert cookie header"""
+            if _thread_local.session.needs_save and _thread_local.session.auto_save:
+                _thread_local.session.save()
+            elif _thread_local.session.needs_save and _thread_local.session.started:
+                _thread_local.session.save(sync_only=True)
 
             header = _thread_local.session.header()
             if header:

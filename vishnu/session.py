@@ -20,6 +20,7 @@ from vishnu.cipher import AESCipher
 class VishnuSession(ndb.Model): #pylint: disable=R0903, W0232
     """NDB model for storing session"""
     expires = ndb.DateTimeProperty(required=False)
+    last_accessed = ndb.DateTimeProperty(required=True)
     data = ndb.PickleProperty(required=True, compressed=True)
 
 #constant used for specifying this cookie should expire at the end of the session
@@ -40,6 +41,8 @@ class Session(object): #pylint: disable=R0902, R0904
     def __init__(self): #pylint: disable=R0912, R0915
         self._send_cookie = False
         self._expire_cookie = False
+        self._last_accessed = None
+        self._started = False
 
         self._data = {}
         self._sid = uuid.uuid4().hex
@@ -93,6 +96,7 @@ class Session(object): #pylint: disable=R0902, R0904
             self._http_only = http_only == "True"
 
         #auto save
+        self._needs_save = False
         auto_save = os.environ.get("VISHNU_AUTO_SAVE")
         if auto_save is None:
             self._auto_save = False
@@ -118,6 +122,26 @@ class Session(object): #pylint: disable=R0902, R0904
 
         #attempt to load an existing cookie
         self._load_cookie()
+
+    @property
+    def started(self):
+        """
+        Has the session been started?
+         - True if autosave is on and session has been modified
+         - True if autosave is off if session has been saved at least once
+         - True is a matching persistent session was found
+        """
+        return self._started
+
+    @property
+    def needs_save(self):
+        """Does this session need to be saved."""
+        return self._needs_save
+
+    @property
+    def auto_save(self):
+        """Does this session have auto save enabled."""
+        return self._auto_save
 
     @property
     def timeout(self):
@@ -237,6 +261,8 @@ class Session(object): #pylint: disable=R0902, R0904
             self._model = ndb.Key(VishnuSession, self._sid).get()
             self._loaded = True
             if self._model:
+                self._started = True
+                self._last_accessed = self._model.last_accessed
                 self._data = self._model.data
 
     def _clear_data(self):
@@ -246,23 +272,29 @@ class Session(object): #pylint: disable=R0902, R0904
             self._model.key.delete()
             self._model = None
 
-    def start(self):
-        """Starts a new session."""
-        self._data = {}
+    def save(self, sync_only=False):
+        """Saves session to persistent storage (NDB datastore)."""
 
-    def save(self):
-        """Saves session to persisten storage (NDB datastore)."""
+        #saving a session marks it as started
+        self._started = True
 
         #try to find an existing session
         self._model = ndb.Key(VishnuSession, self._sid).get()
         if self._model is None:
             self._model = VishnuSession(id=self._sid)
-        self._model.data = self._data
+        
+        if sync_only:
+            self._model.last_accessed = self._last_accessed
+        else:
+            self._model.data = self._data
+            self._model.last_accessed = self._last_accessed
         if self._expires:
             self._model.expires = self._expires
+
         self._model.put()
 
         self._send_cookie = True
+        self._needs_save = False
 
     def terminate(self):
         """Terminates an active session"""
@@ -274,12 +306,18 @@ class Session(object): #pylint: disable=R0902, R0904
     def get(self, key):
         """Retrieve a value from the session dictionary"""
         self._load_data()
+        self._needs_save = True
+        self._last_accessed = datetime.now()
         return self._data.get(key)
 
     def __setitem__(self, key, value):
         """Set a value in the session dictionary"""
         self._load_data()
+        self._needs_save = True
 
+        #if autosave is on then a session is automatically started when set
         if self._auto_save:
-            self.save()
+            self._started = True
+        
+        self._last_accessed = datetime.now()
         self._data[key] = value
