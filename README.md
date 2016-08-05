@@ -55,11 +55,13 @@ Each session uses the default timeout specified in `app.yaml` but if you want to
 have particular sessions differ to this you can do the following.
 ```
 session = vishnu.get_session()
-self.session.timeout = 3600
+session.timeout = 3600
+session.save()
 ```
 The timeout is in seconds. To set the timeout to expire at the end of this session
  you can use the `vishnu.session.TIMEOUT_SESSION` constant.
 ```
 session = vishnu.get_session()
-self.session.timeout = vishnu.session.TIMEOUT_SESSION
+session.timeout = vishnu.session.TIMEOUT_SESSION
+session.save()
 ```
