@@ -65,3 +65,9 @@ session = vishnu.get_session()
 session.timeout = vishnu.session.TIMEOUT_SESSION
 session.save()
 ```
+
+### Cleaning up Expired Sessions
+
+Add the following to a cron handler.
+```
+```
