@@ -13,3 +13,7 @@ from vishnu.session import Session
 def get_session():
     """Returns the session for the current request"""
     return _thread_local.session
+
+def delete_expired_sessions():
+    """Deletes expired sessions"""
+    pass
