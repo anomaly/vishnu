@@ -10,9 +10,9 @@ Sessions for the Google App Engine python runtime
  - Secure
  - HttpOnly
  - Expires (timeout)
-- HMAC
-- Autosave setting which automatically saves anytime a session value is added
-- Optional Encryption of cookie data
+- HMAC signature to verify cookie has not been tampered
+- Autosave option which saves anytime a session value is modified
+- Optional Encryption of cookie data using AES
 - Custom timeout per session
 
 ## Configuration
@@ -36,10 +36,30 @@ Vishnu will automatically look for and use the following variables from your `ap
 
 If using encryption you will need to add the following to your `app.yaml`.
 ```
+libraries:
 - name: pycrypto
   version: "2.6"
 ```
 
 ### WSGI Middleware
 
+To use vishnu you must add it as a middle to your WSGI application.
+```
+from vishnu.middleware import SessionMiddleware
+app = SessionMiddleware(app)
+```
+
 ### Setting a Custom Timeout
+
+Each session uses the default timeout specified in `app.yaml` but if you want to
+have particular sessions differ to this you can do the following.
+```
+session = vishnu.get_session()
+self.session.timeout = 3600
+```
+The timeout is in seconds. To set the timeout to expire at the end of this session
+ you can use the `vishnu.session.TIMEOUT_SESSION` constant.
+```
+session = vishnu.get_session()
+self.session.timeout = vishnu.session.TIMEOUT_SESSION
+```
