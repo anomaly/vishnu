@@ -23,6 +23,9 @@ class VishnuSession(ndb.Model): #pylint: disable=R0903, W0232
 #constant used for specifying this cookie should expire at the end of the session
 TIMEOUT_SESSION = "timeout_session"
 
+SECRET_MIN_LEN = 32
+ENCRYPT_KEY_MIN_LEN = 32
+
 DEFAULT_COOKIE_NAME = "vishnu"
 SIG_LENGTH = 128
 SID_LENGTH = 32
@@ -51,7 +54,13 @@ class Session(object): #pylint: disable=R0902, R0904
 
         #secret
         self._secret = os.environ.get("VISHNU_SECRET")
-        #error if secret missing
+        if self._secret is None or len(self._secret) < SECRET_MIN_LEN:
+            raise ValueError("Secret should be at least %i characters" % SECRET_MIN_LEN)
+
+        #encrypt key
+        self._encrypt_key = os.environ.get("VISHNU_ENCRYPT_KEY")
+        if self._encrypt_key is not None and len(self._encrypt_key) < ENCRYPT_KEY_MIN_LEN:
+            raise ValueError("Encrypt key should be at least %i characters" % ENCRYPT_KEY_MIN_LEN)
 
         #secure
         secure = os.environ.get("VISHNU_SECURE")
