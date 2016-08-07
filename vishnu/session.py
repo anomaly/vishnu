@@ -300,6 +300,8 @@ class Session(object): #pylint: disable=R0902, R0904
         """Terminates an active session"""
         self._data = {}
         self._clear_data()
+        self._needs_save = False
+        self._started = False
         self._expire_cookie = True
         self._send_cookie = True
 
