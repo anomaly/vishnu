@@ -70,4 +70,11 @@ session.save()
 
 Add the following to a cron handler.
 ```
+while not delete_expired_sessions():
+    pass
 ```
+
+You can alter the period after expired sessions are deleted by passing a value in
+seconds as `dormant_for`.
+
+You can also alter the amount of sessions to delete per call using the `limit` argument.
