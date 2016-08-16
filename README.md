@@ -70,7 +70,9 @@ session.save()
 
 Add the following to a cron handler.
 ```
-while not delete_expired_sessions():
+import vishnu
+
+while not vishnu.delete_expired_sessions():
     pass
 ```
 
