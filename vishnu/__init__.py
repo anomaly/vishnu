@@ -5,12 +5,14 @@ from __future__ import absolute_import
 
 import threading
 
-_thread_local = threading.local() # pylint: disable=C0103
+_thread_local = threading.local()  # pylint: disable=C0103
 _thread_local.session = None
+
 
 def get_session():
     """Returns the session for the current request"""
     return _thread_local.session
+
 
 def delete_expired_sessions(dormant_for=86400, limit=500):
     """Deletes expired sessions
@@ -29,7 +31,7 @@ def delete_expired_sessions(dormant_for=86400, limit=500):
     last_accessed = now - timedelta(seconds=dormant_for)
 
     query = VishnuSession.query(ndb.OR(
-        ndb.AND(VishnuSession.expires <= now, VishnuSession.expires!=None),
+        ndb.AND(VishnuSession.expires <= now, VishnuSession.expires != None),
         VishnuSession.last_accessed <= last_accessed
     ))
     results = query.fetch(keys_only=True, limit=limit)

@@ -10,6 +10,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 import hashlib
 
+
 class AESCipher(object):
     """Helper class for using AES encryption."""
 

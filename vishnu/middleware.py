@@ -6,7 +6,8 @@ from __future__ import absolute_import
 from vishnu import _thread_local
 from vishnu.session import Session
 
-class SessionMiddleware(object): #pylint: disable=R0903
+
+class SessionMiddleware(object):  # pylint: disable=R0903
     """WSGI middleware for adding support for sessions."""
 
     def __init__(self, app):

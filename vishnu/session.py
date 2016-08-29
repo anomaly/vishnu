@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 from google.appengine.ext import ndb
 
-from  Cookie import SimpleCookie
+from Cookie import SimpleCookie
 
 from datetime import datetime, timedelta
 import hashlib
@@ -17,13 +17,14 @@ import uuid
 
 from vishnu.cipher import AESCipher
 
-class VishnuSession(ndb.Model): #pylint: disable=R0903, W0232
+
+class VishnuSession(ndb.Model):  # pylint: disable=R0903, W0232
     """NDB model for storing session"""
     expires = ndb.DateTimeProperty(required=False)
     last_accessed = ndb.DateTimeProperty(required=True)
     data = ndb.PickleProperty(required=True, compressed=True)
 
-#constant used for specifying this cookie should expire at the end of the session
+# constant used for specifying this cookie should expire at the end of the session
 TIMEOUT_SESSION = "timeout_session"
 
 SECRET_MIN_LEN = 32
@@ -35,10 +36,10 @@ SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
 
-class Session(object): #pylint: disable=R0902, R0904
+class Session(object):  # pylint: disable=R0902, R0904
     """The vishnu session object."""
 
-    def __init__(self): #pylint: disable=R0912, R0915
+    def __init__(self):  # pylint: disable=R0912, R0915
         self._send_cookie = False
         self._expire_cookie = False
         self._last_accessed = None
@@ -49,53 +50,53 @@ class Session(object): #pylint: disable=R0902, R0904
         self._model = None
         self._loaded = False
 
-        #try to fetch the default values for this session
-        #cookie name
+        # try to fetch the default values for this session
+        # cookie name
         cookie_name = os.environ.get("VISHNU_COOKIE_NAME")
         if cookie_name is None:
             self._cookie_name = DEFAULT_COOKIE_NAME
         else:
             self._cookie_name = cookie_name
 
-        #secret
+        # secret
         self._secret = os.environ.get("VISHNU_SECRET")
         if self._secret is None or len(self._secret) < SECRET_MIN_LEN:
             raise ValueError("Secret should be at least %i characters" % SECRET_MIN_LEN)
 
-        #encrypt key
+        # encrypt key
         self._encrypt_key = os.environ.get("VISHNU_ENCRYPT_KEY")
         if self._encrypt_key is not None and len(self._encrypt_key) < ENCRYPT_KEY_MIN_LEN:
             raise ValueError("Encrypt key should be at least %i characters" % ENCRYPT_KEY_MIN_LEN)
 
-        #secure
+        # secure
         secure = os.environ.get("VISHNU_SECURE")
         if secure is None:
             self._secure = True
         else:
             self._secure = secure == "True"
 
-        #domain
+        # domain
         domain = os.environ.get("VISHNU_DOMAIN")
         if domain is None:
             self._domain = None
         else:
             self._domain = domain
 
-        #path
+        # path
         path = os.environ.get("VISHNU_PATH")
         if path is None:
             self._path = "/"
         else:
             self._path = path
 
-        #http only
+        # http only
         http_only = os.environ.get("VISHNU_HTTP_ONLY")
         if http_only is None:
             self._http_only = True
         else:
             self._http_only = http_only == "True"
 
-        #auto save
+        # auto save
         self._needs_save = False
         auto_save = os.environ.get("VISHNU_AUTO_SAVE")
         if auto_save is None:
@@ -103,7 +104,7 @@ class Session(object): #pylint: disable=R0902, R0904
         else:
             self._auto_save = auto_save == "True"
 
-        #timeout
+        # timeout
         timeout = os.environ.get("VISHNU_TIMEOUT")
         if timeout is not None:
             try:
@@ -114,13 +115,13 @@ class Session(object): #pylint: disable=R0902, R0904
             if self._timeout < 0:
                 raise TypeError("VISHNU_TIMEOUT must be a non-negative integer")
 
-            #calculate the expiry date
+            # calculate the expiry date
             self._calculate_expires()
         else:
             self._timeout = None
             self._expires = None
 
-        #attempt to load an existing cookie
+        # attempt to load an existing cookie
         self._load_cookie()
 
     @property
@@ -172,7 +173,7 @@ class Session(object): #pylint: disable=R0902, R0904
         cookie = SimpleCookie(os.environ.get('HTTP_COOKIE'))
         vishnu_keys = [key for key in cookie.keys() if key == self._cookie_name]
 
-        #no session was started yet
+        # no session was started yet
         if not vishnu_keys:
             return
 
@@ -204,10 +205,10 @@ class Session(object): #pylint: disable=R0902, R0904
             if self._path:
                 header += " Path=%s;" % self._path
 
-            #expire the cookie
+            # expire the cookie
             if self._expire_cookie:
                 header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
-            #set the cookie expiry
+            # set the cookie expiry
             elif self._timeout:
                 header += " Expires=%s;" % self._expires.strftime(EXPIRES_FORMAT)
 
@@ -256,7 +257,7 @@ class Session(object): #pylint: disable=R0902, R0904
 
     def _load_data(self):
         """Loads data dict from NDB datastore."""
-        #load the persistent model on first access
+        # load the persistent model on first access
         if self._model is None and not self._loaded:
             self._model = ndb.Key(VishnuSession, self._sid).get()
             self._loaded = True
@@ -275,10 +276,10 @@ class Session(object): #pylint: disable=R0902, R0904
     def save(self, sync_only=False):
         """Saves session to persistent storage (NDB datastore)."""
 
-        #saving a session marks it as started
+        # saving a session marks it as started
         self._started = True
 
-        #try to find an existing session
+        # try to find an existing session
         self._model = ndb.Key(VishnuSession, self._sid).get()
         if self._model is None:
             self._model = VishnuSession(id=self._sid)
@@ -317,7 +318,7 @@ class Session(object): #pylint: disable=R0902, R0904
         self._load_data()
         self._needs_save = True
 
-        #if autosave is on then a session is automatically started when set
+        # if autosave is on then a session is automatically started when set
         if self._auto_save:
             self._started = True
         
