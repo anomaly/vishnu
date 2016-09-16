@@ -43,7 +43,7 @@ libraries:
 
 ### WSGI Middleware
 
-To use vishnu you must add it as a middle to your WSGI application.
+To use vishnu you must add it as a middleware to your WSGI application.
 ```
 from vishnu.middleware import SessionMiddleware
 app = SessionMiddleware(app)
