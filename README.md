@@ -10,7 +10,7 @@ Sessions for the Google App Engine python runtime
  - Secure
  - HttpOnly
  - Expires (timeout)
-- HMAC signature to verify cookie has not been tampered
+- HMAC signature to verify cookie has not been tampered with
 - Autosave option which saves anytime a session value is modified
 - Optional Encryption of cookie data using AES
 - Custom timeout per session
