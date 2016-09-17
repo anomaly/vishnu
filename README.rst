@@ -8,11 +8,11 @@ Features
 
 -  Cookie based session for Google App Engine using the NDB datastore
 -  Configurable for the following cookie settings:
--  Domain
--  Path
--  Secure
--  HttpOnly
--  Expires (timeout)
+    -  Domain
+    -  Path
+    -  Secure
+    -  HttpOnly
+    -  Expires (timeout)
 -  HMAC signature to verify cookie has not been tampered with
 -  Autosave option which saves anytime a session value is modified
 -  Optional Encryption of cookie data using AES
@@ -24,8 +24,7 @@ Configuration
 app.yaml
 ~~~~~~~~
 
-Vishnu will automatically look for and use the following variables from
-your ``app.yaml`` config.
+Vishnu will automatically look for and use the following variables from your ``app.yaml`` config.
 
 +------+----------+---------+------------+
 | name | required | default | descriptio |
@@ -98,8 +97,8 @@ your ``app.yaml`` config.
 |      |          |         | value is   |
 |      |          |         | set.       |
 +------+----------+---------+------------+
-| ``VI | no       | N/A     | How long   |
-| SHNU |          |         | until this |
+| ``VISHNU_TIMEOUT`` | no       | N/A     | How long   |
+|  |          |         | until this |
 | _TIM |          |         | cookie     |
 | EOUT |          |         | expires.   |
 | ``   |          |         | If omitted |
@@ -114,10 +113,9 @@ your ``app.yaml`` config.
 Dependencies
 ~~~~~~~~~~~~
 
-If using encryption you will need to add the following to your
-``app.yaml``.
+If using encryption you will need to add the following to your ``app.yaml``.
 
-::
+.. code:: yaml
 
     libraries:
     - name: pycrypto
@@ -128,7 +126,7 @@ WSGI Middleware
 
 To use vishnu you must add it as a middleware to your WSGI application.
 
-::
+.. code:: python
 
     from vishnu.middleware import SessionMiddleware
     app = SessionMiddleware(app)
@@ -136,21 +134,17 @@ To use vishnu you must add it as a middleware to your WSGI application.
 Setting a Custom Timeout
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each session uses the default timeout specified in ``app.yaml`` but if
-you want to have particular sessions differ to this you can do the
-following.
+Each session uses the default timeout specified in ``app.yaml`` but if you want to have particular sessions differ to this you can do the following.
 
-::
+.. code:: python
 
     session = vishnu.get_session()
     session.timeout = 3600
     session.save()
 
-The timeout is in seconds. To set the timeout to expire at the end of
-this session you can use the ``vishnu.session.TIMEOUT_SESSION``
-constant.
+The timeout is in seconds. To set the timeout to expire at the end of this session you can use the ``vishnu.session.TIMEOUT_SESSION`` constant.
 
-::
+.. code:: python
 
     session = vishnu.get_session()
     session.timeout = vishnu.session.TIMEOUT_SESSION
@@ -161,15 +155,13 @@ Cleaning up Expired Sessions
 
 Add the following to a cron handler.
 
-::
+.. code:: python
 
     import vishnu
 
     while not vishnu.delete_expired_sessions():
         pass
 
-You can alter the period after expired sessions are deleted by passing a
-value in seconds as ``dormant_for``.
+You can alter the period after expired sessions are deleted by passing a value in seconds as ``dormant_for``.
 
-You can also alter the amount of sessions to delete per call using the
-``limit`` argument.
+You can also alter the amount of sessions to delete per call using the ``limit`` argument.
