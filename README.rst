@@ -7,7 +7,7 @@ Features
 --------
 
 -  Cookie based session for Google App Engine using the NDB datastore
--  Configurable for the following cookie settings:
+-  Configurable for the following cookie settings
     -  Domain
     -  Path
     -  Secure
@@ -26,89 +26,18 @@ app.yaml
 
 Vishnu will automatically look for and use the following variables from your ``app.yaml`` config.
 
-+------+----------+---------+------------+
-| name | required | default | descriptio |
-|      |          |         | n          |
-+======+==========+=========+============+
-| ``VI | no       | ``vishn | The name   |
-| SHNU |          | u``     | to use for |
-| _COO |          |         | the        |
-| KIE_ |          |         | cookie. If |
-| NAME |          |         | omitted it |
-| ``   |          |         | will       |
-|      |          |         | default to |
-|      |          |         | ``vishnu`` |
-|      |          |         | .          |
-+------+----------+---------+------------+
-| ``VI | yes      | N/A     | Secret     |
-| SHNU |          |         | used for   |
-| _SEC |          |         | HMAC       |
-| RET` |          |         | signature  |
-| `    |          |         |            |
-+------+----------+---------+------------+
-| ``VI | no       | N/A     | Key used   |
-| SHNU |          |         | to encrypt |
-| _ENC |          |         | cookie     |
-| RYPT |          |         | data, it   |
-| _KEY |          |         | omitted    |
-| ``   |          |         | then value |
-|      |          |         | will not   |
-|      |          |         | be         |
-|      |          |         | encrypted. |
-+------+----------+---------+------------+
-| ``VI | no       | N/A     | The domain |
-| SHNU |          |         | to set the |
-| _DOM |          |         | cookie     |
-| AIN` |          |         | for. If    |
-| `    |          |         | omitted it |
-|      |          |         | will       |
-|      |          |         | default to |
-|      |          |         | the domain |
-|      |          |         | the cookie |
-|      |          |         | was served |
-|      |          |         | from.      |
-+------+----------+---------+------------+
-| ``VI | no       | ``/``   | The path   |
-| SHNU |          |         | to set the |
-| _PAT |          |         | cookie     |
-| H``  |          |         | for. If    |
-|      |          |         | omitted it |
-|      |          |         | will       |
-|      |          |         | default to |
-|      |          |         | ``/``.     |
-+------+----------+---------+------------+
-| ``VI | no       | true    | Only send  |
-| SHNU |          |         | this       |
-| _SEC |          |         | cookie     |
-| URE` |          |         | over SSL.  |
-| `    |          |         |            |
-+------+----------+---------+------------+
-| ``VI | no       | true    | Only allow |
-| SHNU |          |         | cookie     |
-| _HTT |          |         | access via |
-| P_ON |          |         | HTTP/HTTPS |
-| LY`` |          |         | .          |
-+------+----------+---------+------------+
-| ``VI | no       | false   | Automatica |
-| SHNU |          |         | lly        |
-| _AUT |          |         | save the   |
-| O_SA |          |         | session    |
-| VE`` |          |         | when a     |
-|      |          |         | value is   |
-|      |          |         | set.       |
-+------+----------+---------+------------+
-| ``VISHNU_TIMEOUT`` | no       | N/A     | How long   |
-|  |          |         | until this |
-| _TIM |          |         | cookie     |
-| EOUT |          |         | expires.   |
-| ``   |          |         | If omitted |
-|      |          |         | it will    |
-|      |          |         | last for   |
-|      |          |         | the length |
-|      |          |         | of the     |
-|      |          |         | browser    |
-|      |          |         | session.   |
-+------+----------+---------+------------+
+.. csv-table::
+   :header: "Name", "Required", "Default", "Description"
+
+    ``VISHNU_COOKIE_NAME``, no, ``vishnu``, "The name to use for the cookie. If omitted it omitted it will default ``vishnu``"
+    ``VISHNU_SECRET``, yes, "N/A", "Secret used for HMAC signature"
+    ``VISHNU_ENCRYPT_KEY``, no, "N/A", "Key used to encrypt cookie data, it omitted then value will not be encrypted."
+    ``VISHNU_DOMAIN``, no, "N/A", "The domain to set the cookie for. If omitted it will default to the domain the cookie was served from."
+    ``VISHNU_PATH``, no, ``/``, "The path to set the cookie for. If omitted it will default to `/`."
+    ``VISHNU_SECURE``, no, ``true``, "Only send this cookie over SSL."
+    ``VISHNU_HTTP_ONLY``, no, ``true``, "Only allow cookie access via HTTP/HTTPS."
+    ``VISHNU_AUTO_SAVE``, no, ``false``, "Automatically save the session when a value is set."
+    ``VISHNU_TIMEOUT``, no, N/A, "How long until this cookie expires. If omitted it will last for the length of the browser session."
 
 Dependencies
 ~~~~~~~~~~~~
