@@ -1,0 +1,10 @@
+language: python
+python:
+  - "2.7"
+  - "pypy"
+install:
+  - pip install -U coveralls
+after_success:
+  - coveralls
+notifications:
+  email: false
