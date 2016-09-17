@@ -3,6 +3,10 @@ vishnu
 
 Sessions for the Google App Engine python runtime
 
+.. image:: https://img.shields.io/pypi/dm/vishnu.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/vishnu/
+    :alt: Download
+
 Features
 --------
 
