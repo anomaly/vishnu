@@ -33,13 +33,13 @@ Features
 Installation
 ------------
 
-Vishu is available on `PyPi <https://pypi.python.org/pypi/vishnu>`_ and we recommend using `vendoring <http://blog.jonparrott.com/managing-vendored-packages-on-app-engine/>`_
+Vishu is available on `PyPi <https://pypi.python.org/pypi/vishnu>`_ and we recommend installation via ``pip`` as a `vendored package. <http://blog.jonparrott.com/managing-vendored-packages-on-app-engine/>`_
 
 .. code:: bash
 
     pip install -t libs vishnu
 
-Alternatively download your preferred tagged release and all you should have to include is the ``vishnu`` folder.
+Alternatively download your `preferred tagged release <https://github.com/anomaly/vishnu/releases>`_ and all you should have to include is the ``vishnu`` folder.
 
 Configuration
 -------------
