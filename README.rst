@@ -10,17 +10,17 @@ Sessions for the Google App Engine python runtime
 Features
 --------
 
--  Cookie based session for Google App Engine using the NDB datastore
--  Configurable for the following cookie settings
-    -  Domain
-    -  Path
-    -  Secure
-    -  HttpOnly
-    -  Expires (timeout)
--  HMAC signature to verify cookie has not been tampered with
--  Autosave option which saves anytime a session value is modified
--  Optional Encryption of cookie data using AES
--  Custom timeout per session
+- Cookie based session for Google App Engine using the NDB datastore
+- Configurable for the following cookie settings
+    - Domain
+    - Path
+    - Secure
+    - HttpOnly
+    - Expires (timeout)
+- HMAC signature to verify cookie has not been tampered with
+- Autosave option which saves anytime a session value is modified
+- Optional Encryption of cookie data using AES
+- Custom timeout per session
 
 Configuration
 -------------
