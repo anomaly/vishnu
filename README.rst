@@ -7,6 +7,14 @@ Sessions for the Google App Engine python runtime
     :target: https://pypi.python.org/pypi/vishnu/
     :alt: Download
 
+.. image:: https://travis-ci.org/anomaly/vishnu.svg?branch=master&maxAge=2592000
+   :target: https://travis-ci.org/anomaly/vishnu/
+   :alt: build status
+
+.. image:: https://img.shields.io/coveralls/anomaly/vishnu.svg?maxAge=2592000
+   :target: https://coveralls.io/github/anomaly/vishnu
+   :alt: code coverage
+
 Features
 --------
 
@@ -21,6 +29,17 @@ Features
 - Autosave option which saves anytime a session value is modified
 - Optional Encryption of cookie data using AES
 - Custom timeout per session
+
+Installation
+------------
+
+Vishu is available on `PyPi <https://pypi.python.org/pypi/vishnu>`_ and we recommend using `vendoring <http://blog.jonparrott.com/managing-vendored-packages-on-app-engine/>`_
+
+.. code:: bash
+
+    pip install -t libs vishnu
+
+Alternatively download your preferred tagged release and all you should have to include is the ``vishnu`` folder.
 
 Configuration
 -------------
