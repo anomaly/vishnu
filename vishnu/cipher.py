@@ -15,7 +15,7 @@ class AESCipher(object):
     """Helper class for using AES encryption."""
 
     def __init__(self, key):
-        self._key = hashlib.sha256(key).digest()
+        self._key = hashlib.sha256(key.encode('utf-8')).digest()
 
     @classmethod
     def pad(cls, data):

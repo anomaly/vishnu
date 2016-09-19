@@ -29,6 +29,7 @@ clean:
 	if [ -a build ]; then rm -rf build; fi;
 	if [ -a dist ]; then rm -rf dist; fi;
 	if [ -a build ]; then rm -rf build; fi;
+	if [ -a .tox ]; then rm -rf .tox; fi;
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*.egg' -exec rm -f {} +

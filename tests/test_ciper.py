@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import pytest
+
 
 @pytest.fixture
 def cipher():
@@ -16,6 +18,7 @@ def test_pad_unpad():
     assert len(padded_data) % AES.block_size == 0
     unpadded_data = AESCipher.unpad(padded_data)
     assert len(data_to_pad) == len(unpadded_data)
+    assert data_to_pad == unpadded_data
 
 
 def test_encrypt_decrypt(cipher):

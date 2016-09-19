@@ -125,6 +125,10 @@ class Session(object):  # pylint: disable=R0902, R0904
         self._load_cookie()
 
     @property
+    def cookie_name(self):
+        return self._cookie_name
+
+    @property
     def started(self):
         """
         Has the session been started?
