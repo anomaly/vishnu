@@ -28,14 +28,22 @@ class AESCipher(object):
         return data[:-ord(data[len(data)-1:])]
 
     def encrypt(self, raw):
-        """Encrypts raw data using AES and then base64 encodes it."""
+        """
+        Encrypts raw data using AES and then base64 encodes it.
+        :param raw:
+        :return:
+        """
         padded = AESCipher.pad(raw)
         init_vec = Random.new().read(AES.block_size)
         cipher = AES.new(self._key, AES.MODE_CBC, init_vec)
         return b64encode(init_vec + cipher.encrypt(padded))
 
     def decrypt(self, encrypted):
-        """Base64 decodes the data and then decrypts using AES."""
+        """
+        Base64 decodes the data and then decrypts using AES.
+        :param encrypted:
+        :return:
+        """
         decoded = b64decode(encrypted)
         init_vec = decoded[:AES.block_size]
         ciper = AES.new(self._key, AES.MODE_CBC, init_vec)

@@ -1,18 +1,26 @@
-PROJ_NAME   = prestans3
-PYTHON35    = python3.5
-PTYHON27    = python2.7
+PROJECT_NAME    = vishnu
+PYTHON35        = python3.5
+PYTHON27        = python2.7
 
-.PHONY: clean
+.PHONY: help
+help:
+	@echo "Please use 'make <target>' where <target> is one of"
+	@echo "  tests      runs the unit tests"
+	@echo "  dist       prepares for release"
+	@echo "  release    makes the release"
+	@echo "  clean      cleans the build environment"
+
+.PHONY: tests
 tests:
 	tox
 
 .PHONY: dist
 dist:
-	$(PTYHON27) setup.py sdist bdist_wheel
+	$(PYTHON27) setup.py sdist bdist_wheel
 
 .PHONY: release
 release:
-	$(PTYHON27) setup.py sdist bdist_wheel upload
+	$(PYTHON27) setup.py sdist bdist_wheel upload
 
 .PHONY: clean
 clean:
