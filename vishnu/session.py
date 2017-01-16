@@ -213,7 +213,7 @@ class Session(object):  # pylint: disable=R0902, R0904
             if self._expire_cookie:
                 header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
             # set the cookie expiry
-            elif self._timeout:
+            elif self._expires:
                 header += " Expires=%s;" % self._expires.strftime(EXPIRES_FORMAT)
 
             if self._secure:
@@ -233,7 +233,7 @@ class Session(object):  # pylint: disable=R0902, R0904
 
     @classmethod
     def is_signature_equal(cls, sig_a, sig_b):
-        """Compares two signatures using a constant time algorithim to avoid timing attacks."""
+        """Compares two signatures using a constant time algorithm to avoid timing attacks."""
         if len(sig_a) != len(sig_b):
             return False
 
@@ -269,6 +269,7 @@ class Session(object):  # pylint: disable=R0902, R0904
                 self._started = True
                 self._last_accessed = self._model.last_accessed
                 self._data = self._model.data
+                self._expires = self._model.expires
 
     def _clear_data(self):
         """Deletes session from NDB datastore."""
