@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 import hashlib
 import hmac
 import logging
-import os
 import uuid
 
 from vishnu.cipher import AESCipher
@@ -39,7 +38,9 @@ EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 class Session(object):  # pylint: disable=R0902, R0904
     """The vishnu session object."""
 
-    def __init__(self):  # pylint: disable=R0912, R0915
+    def __init__(self, environ):  # pylint: disable=R0912, R0915
+
+        self._environ = environ
         self._send_cookie = False
         self._expire_cookie = False
         self._last_accessed = None
@@ -52,45 +53,45 @@ class Session(object):  # pylint: disable=R0902, R0904
 
         # try to fetch the default values for this session
         # cookie name
-        cookie_name = os.environ.get("VISHNU_COOKIE_NAME")
+        cookie_name = environ.get("VISHNU_COOKIE_NAME")
         if cookie_name is None:
             self._cookie_name = DEFAULT_COOKIE_NAME
         else:
             self._cookie_name = cookie_name
 
         # secret
-        self._secret = os.environ.get("VISHNU_SECRET")
+        self._secret = environ.get("VISHNU_SECRET")
         if self._secret is None or len(self._secret) < SECRET_MIN_LEN:
             raise ValueError("Secret should be at least %i characters" % SECRET_MIN_LEN)
 
         # encrypt key
-        self._encrypt_key = os.environ.get("VISHNU_ENCRYPT_KEY")
+        self._encrypt_key = environ.get("VISHNU_ENCRYPT_KEY")
         if self._encrypt_key is not None and len(self._encrypt_key) < ENCRYPT_KEY_MIN_LEN:
             raise ValueError("Encrypt key should be at least %i characters" % ENCRYPT_KEY_MIN_LEN)
 
         # secure
-        secure = os.environ.get("VISHNU_SECURE")
+        secure = environ.get("VISHNU_SECURE")
         if secure is None:
             self._secure = True
         else:
             self._secure = secure == "True"
 
         # domain
-        domain = os.environ.get("VISHNU_DOMAIN")
+        domain = environ.get("VISHNU_DOMAIN")
         if domain is None:
             self._domain = None
         else:
             self._domain = domain
 
         # path
-        path = os.environ.get("VISHNU_PATH")
+        path = environ.get("VISHNU_PATH")
         if path is None:
             self._path = "/"
         else:
             self._path = path
 
         # http only
-        http_only = os.environ.get("VISHNU_HTTP_ONLY")
+        http_only = environ.get("VISHNU_HTTP_ONLY")
         if http_only is None:
             self._http_only = True
         else:
@@ -98,14 +99,14 @@ class Session(object):  # pylint: disable=R0902, R0904
 
         # auto save
         self._needs_save = False
-        auto_save = os.environ.get("VISHNU_AUTO_SAVE")
+        auto_save = environ.get("VISHNU_AUTO_SAVE")
         if auto_save is None:
             self._auto_save = False
         else:
             self._auto_save = auto_save == "True"
 
         # timeout
-        timeout = os.environ.get("VISHNU_TIMEOUT")
+        timeout = environ.get("VISHNU_TIMEOUT")
         if timeout is not None:
             try:
                 self._timeout = int(timeout)
@@ -174,7 +175,7 @@ class Session(object):  # pylint: disable=R0902, R0904
     def _load_cookie(self):
         """Loads HTTP Cookie from environ"""
 
-        cookie = SimpleCookie(os.environ.get('HTTP_COOKIE'))
+        cookie = SimpleCookie(self._environ.get('HTTP_COOKIE'))
         vishnu_keys = [key for key in cookie.keys() if key == self._cookie_name]
 
         # no session was started yet
