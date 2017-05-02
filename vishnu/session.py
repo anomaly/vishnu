@@ -4,8 +4,6 @@ Vishnu session.
 
 from __future__ import absolute_import
 
-from google.appengine.ext import ndb
-
 from Cookie import SimpleCookie
 
 from datetime import datetime, timedelta
@@ -15,13 +13,7 @@ import logging
 import uuid
 
 from vishnu.cipher import AESCipher
-
-
-class VishnuSession(ndb.Model):  # pylint: disable=R0903, W0232
-    """NDB model for storing session"""
-    expires = ndb.DateTimeProperty(required=False)
-    last_accessed = ndb.DateTimeProperty(required=True)
-    data = ndb.PickleProperty(required=True, compressed=True)
+from vishnu.backend import BackendType
 
 # constant used for specifying this cookie should expire at the end of the session
 TIMEOUT_SESSION = "timeout_session"
@@ -30,6 +22,8 @@ SECRET_MIN_LEN = 32
 ENCRYPT_KEY_MIN_LEN = 32
 
 DEFAULT_COOKIE_NAME = "vishnu"
+DEFAULT_BACKEND = BackendType.GoogleAppEngineNDB
+
 SIG_LENGTH = 128
 SID_LENGTH = 32
 EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
@@ -46,9 +40,7 @@ class Session(object):  # pylint: disable=R0902, R0904
         self._last_accessed = None
         self._started = False
 
-        self._data = {}
         self._sid = uuid.uuid4().hex
-        self._model = None
         self._loaded = False
 
         # try to fetch the default values for this session
@@ -122,6 +114,13 @@ class Session(object):  # pylint: disable=R0902, R0904
             self._timeout = None
             self._expires = None
 
+        # configure the backend
+        backend = environ.get("VISHNU_BACKEND")
+        if backend is None:
+            backend = DEFAULT_BACKEND
+
+        self._configure_backend(backend)
+
         # attempt to load an existing cookie
         self._load_cookie()
 
@@ -164,6 +163,15 @@ class Session(object):  # pylint: disable=R0902, R0904
         else:
             self._timeout = value
             self._calculate_expires()
+
+    def _configure_backend(self, backend_type):
+        """Configures a backend for this session to use"""
+
+        if backend_type == BackendType.GoogleAppEngineNDB:
+            from vishnu.backend.gae_ndb import Backend
+            self._backend = Backend()
+        else:
+            raise ValueError("Unknown backend type: %s" % backend_type)
 
     def _calculate_expires(self):
         """Calculates the session expiry using the timeout"""
@@ -260,53 +268,25 @@ class Session(object):  # pylint: disable=R0902, R0904
 
         return cookie_sid
 
-    def _load_data(self):
-        """Loads data dict from NDB datastore."""
-        # load the persistent model on first access
-        if self._model is None and not self._loaded:
-            self._model = ndb.Key(VishnuSession, self._sid).get()
-            self._loaded = True
-            if self._model:
-                self._started = True
-                self._last_accessed = self._model.last_accessed
-                self._data = self._model.data
-                self._expires = self._model.expires
+    def _load_backend(self):
+        self._started, self._last_accessed, self._expires = self._backend.load(self._sid)
 
-    def _clear_data(self):
-        """Deletes session from NDB datastore."""
-        self._load_data()
-        if self._model:
-            self._model.key.delete()
-            self._model = None
+    def _clear_backend(self):
+        self._backend.clear()
 
     def save(self, sync_only=False):
-        """Saves session to persistent storage (NDB datastore)."""
 
         # saving a session marks it as started
         self._started = True
 
-        # try to find an existing session
-        self._model = ndb.Key(VishnuSession, self._sid).get()
-        if self._model is None:
-            self._model = VishnuSession(id=self._sid)
-        
-        if sync_only:
-            self._model.last_accessed = self._last_accessed
-        else:
-            self._model.data = self._data
-            self._model.last_accessed = self._last_accessed
-        if self._expires:
-            self._model.expires = self._expires
-
-        self._model.put()
+        self._backend.save(self._last_accessed, self._expires, sync_only)
 
         self._send_cookie = True
         self._needs_save = False
 
     def terminate(self):
         """Terminates an active session"""
-        self._data = {}
-        self._clear_data()
+        self._clear_backend()
         self._needs_save = False
         self._started = False
         self._expire_cookie = True
@@ -314,14 +294,14 @@ class Session(object):  # pylint: disable=R0902, R0904
 
     def get(self, key):
         """Retrieve a value from the session dictionary"""
-        self._load_data()
+        self._load_backend()
         self._needs_save = True
         self._last_accessed = datetime.now()
-        return self._data.get(key)
+        return self._backend.data.get(key)
 
     def __setitem__(self, key, value):
         """Set a value in the session dictionary"""
-        self._load_data()
+        self._load_backend()
         self._needs_save = True
 
         # if autosave is on then a session is automatically started when set
@@ -329,4 +309,4 @@ class Session(object):  # pylint: disable=R0902, R0904
             self._started = True
         
         self._last_accessed = datetime.now()
-        self._data[key] = value
+        self._backend.data[key] = value

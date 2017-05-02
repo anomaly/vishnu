@@ -52,7 +52,8 @@ Vishnu will automatically look for and use the following variables from your ``a
 .. csv-table::
    :header: "Name", "Required", "Default", "Description"
 
-    ``VISHNU_COOKIE_NAME``, no, ``vishnu``, "The name to use for the cookie. If omitted it omitted it will default ``vishnu``"
+    ``VISHNU_BACKEND``, no, ``gae-ndb``, "Which backend to use for storing session information"
+    ``VISHNU_COOKIE_NAME``, no, ``vishnu``, "The name to use for the cookie. If omitted it will default to ``vishnu``"
     ``VISHNU_SECRET``, yes, "N/A", "Secret used for HMAC signature"
     ``VISHNU_ENCRYPT_KEY``, no, "N/A", "Key used to encrypt cookie data, it omitted then value will not be encrypted."
     ``VISHNU_DOMAIN``, no, "N/A", "The domain to set the cookie for. If omitted it will default to the domain the cookie was served from."
