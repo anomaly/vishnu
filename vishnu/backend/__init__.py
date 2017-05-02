@@ -1,29 +1,55 @@
 import abc
+from datetime import datetime
 
 
 class BackendType(object):
+    GoogleAppEngineMemcache = "gae-memcache"
     GoogleAppEngineNDB = "gae-ndb"
 
 
 class Base(object):
 
-    def __init__(self):
-        self._sid = None
-        self._data = {}
+    def __init__(self, sid):
+        self._sid = sid
         self._loaded = False
 
+        self._expires = None
+        self._last_accessed = None
+
+        self._data = {}
+
     @property
-    def data(self):
-        return self._data
+    def expires(self):
+        return self._expires
+
+    @expires.setter
+    def expires(self, value):
+        self._expires = value
+
+    @property
+    def last_accessed(self):
+        return self._last_accessed
+
+    @last_accessed.setter
+    def last_accessed(self, value):
+        self._last_accessed = value
+
+    def get(self, key):
+        self.last_accessed = datetime.now()
+        return self._data.get(key)
+
+    def __setitem__(self, key, value):
+        self.last_accessed = datetime.now()
+        self._data[key] = value
 
     @abc.abstractmethod
-    def load(self, sid):
+    def load(self):
         return False
 
     @abc.abstractmethod
     def clear(self):
-        pass
+        self._data = {}
 
     @abc.abstractmethod
-    def save(self, last_accessed, expires=None, sync_only=False):
-        pass
+    def save(self, sync_only=False):
+        self.last_accessed = datetime.now()

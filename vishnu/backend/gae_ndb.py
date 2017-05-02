@@ -12,22 +12,23 @@ class VishnuSession(ndb.Model):  # pylint: disable=R0903, W0232
 
 class Backend(Base):
 
-    def __init__(self):
-        super(Backend, self).__init__()
+    def __init__(self, sid):
+        super(Backend, self).__init__(sid)
         self._model = None
 
-    def load(self, sid):
-        self._sid = sid
-
+    def load(self):
         if self._model is None and not self._loaded:
             self._model = ndb.Key(VishnuSession, self._sid).get()
             if self._model is None:
-                return False, None, None
+                return False
             else:
                 self._loaded = True
+
+                self.expires = self._model.expires
+                self.last_accessed = self._model.last_accessed
                 self._data = self._model.data
 
-        return True, self._model.last_accessed, self._model.expires
+        return True
 
     def clear(self):
         self._data = {}
@@ -35,18 +36,18 @@ class Backend(Base):
             self._model.key.delete()
             self._model = None
 
-    def save(self, last_accessed, expires=None, sync_only=False):
+    def save(self, sync_only=False):
         # try to find an existing session
         self._model = ndb.Key(VishnuSession, self._sid).get()
         if self._model is None:
             self._model = VishnuSession(id=self._sid)
 
         if sync_only:
-            self._model.last_accessed = last_accessed
+            self._model.last_accessed = self.last_accessed
         else:
             self._model.data = self._data
-            self._model.last_accessed = last_accessed
-        if expires:
-            self._model.expires = expires
+            self._model.last_accessed = self.last_accessed
+        if self.expires:
+            self._model.expires = self.expires
 
         self._model.put()

@@ -112,17 +112,15 @@ class Session(object):  # pylint: disable=R0902, R0904
             self._calculate_expires()
         else:
             self._timeout = None
-            self._expires = None
 
         # configure the backend
         backend = environ.get("VISHNU_BACKEND")
         if backend is None:
             backend = DEFAULT_BACKEND
 
-        self._configure_backend(backend)
-
         # attempt to load an existing cookie
         self._load_cookie()
+        self._configure_backend(backend)
 
     @property
     def cookie_name(self):
@@ -159,26 +157,17 @@ class Session(object):  # pylint: disable=R0902, R0904
 
         if value == TIMEOUT_SESSION:
             self._timeout = None
-            self._expires = None
+            self._backend.expires = None
         else:
             self._timeout = value
             self._calculate_expires()
 
-    def _configure_backend(self, backend_type):
-        """Configures a backend for this session to use"""
-
-        if backend_type == BackendType.GoogleAppEngineNDB:
-            from vishnu.backend.gae_ndb import Backend
-            self._backend = Backend()
-        else:
-            raise ValueError("Unknown backend type: %s" % backend_type)
-
     def _calculate_expires(self):
         """Calculates the session expiry using the timeout"""
-        self._expires = None
+        self._backend.expires = None
 
         now = datetime.now()
-        self._expires = now + timedelta(seconds=self._timeout)
+        self._backend.expires = now + timedelta(seconds=self._timeout)
 
     def _load_cookie(self):
         """Loads HTTP Cookie from environ"""
@@ -199,6 +188,18 @@ class Session(object):  # pylint: disable=R0902, R0904
             self._sid = received_sid
         else:
             logging.warn("found cookie with invalid signature")
+
+    def _configure_backend(self, backend_type):
+        """Configures a backend for this session to use"""
+
+        if backend_type == BackendType.GoogleAppEngineNDB:
+            from vishnu.backend.gae_ndb import Backend
+            self._backend = Backend(self._sid)
+        elif backend_type == BackendType.GoogleAppEngineMemcache:
+            from vishnu.backend.gae_memcache import Backend
+            self._backend = Backend(self._sid)
+        else:
+            raise ValueError("Unknown backend type: %s" % backend_type)
 
     def header(self):
         """Generates HTTP header for this cookie."""
@@ -222,8 +223,8 @@ class Session(object):  # pylint: disable=R0902, R0904
             if self._expire_cookie:
                 header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
             # set the cookie expiry
-            elif self._expires:
-                header += " Expires=%s;" % self._expires.strftime(EXPIRES_FORMAT)
+            elif self._backend.expires:
+                header += " Expires=%s;" % self._backend.expires.strftime(EXPIRES_FORMAT)
 
             if self._secure:
                 header += " Secure;"
@@ -268,25 +269,19 @@ class Session(object):  # pylint: disable=R0902, R0904
 
         return cookie_sid
 
-    def _load_backend(self):
-        self._started, self._last_accessed, self._expires = self._backend.load(self._sid)
-
-    def _clear_backend(self):
-        self._backend.clear()
-
     def save(self, sync_only=False):
 
         # saving a session marks it as started
         self._started = True
 
-        self._backend.save(self._last_accessed, self._expires, sync_only)
+        self._backend.save(sync_only)
 
         self._send_cookie = True
         self._needs_save = False
 
     def terminate(self):
         """Terminates an active session"""
-        self._clear_backend()
+        self._backend.clear()
         self._needs_save = False
         self._started = False
         self._expire_cookie = True
@@ -294,19 +289,18 @@ class Session(object):  # pylint: disable=R0902, R0904
 
     def get(self, key):
         """Retrieve a value from the session dictionary"""
-        self._load_backend()
+        self._started = self._backend.load()
         self._needs_save = True
-        self._last_accessed = datetime.now()
-        return self._backend.data.get(key)
+
+        return self._backend.get(key)
 
     def __setitem__(self, key, value):
         """Set a value in the session dictionary"""
-        self._load_backend()
+        self._started = self._backend.load()
         self._needs_save = True
 
         # if autosave is on then a session is automatically started when set
         if self._auto_save:
             self._started = True
-        
-        self._last_accessed = datetime.now()
-        self._backend.data[key] = value
+
+        self._backend[key] = value
