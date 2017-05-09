@@ -44,12 +44,14 @@ class Base(object):
 
     @abc.abstractmethod
     def load(self):
-        return False
+        raise NotImplementedError
 
     @abc.abstractmethod
     def clear(self):
+        self._expires = None
+        self._last_accessed = None
         self._data = {}
 
     @abc.abstractmethod
     def save(self, sync_only=False):
-        self.last_accessed = datetime.now()
+        raise NotImplementedError

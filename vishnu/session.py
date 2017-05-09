@@ -37,7 +37,6 @@ class Session(object):  # pylint: disable=R0902, R0904
         self._environ = environ
         self._send_cookie = False
         self._expire_cookie = False
-        self._last_accessed = None
         self._started = False
 
         self._sid = uuid.uuid4().hex

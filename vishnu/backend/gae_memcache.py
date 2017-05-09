@@ -1,6 +1,10 @@
 from vishnu.backend import Base
 
+import pickle
+
 from google.appengine.api import memcache
+
+NAMESPACE = "vishnu"
 
 
 class VishnuSession(object):
@@ -31,22 +35,36 @@ class Backend(Base):
 
     def load(self):
 
-        if self._record is None and not self._loaded:
-            self._record = memcache.get(self._sid)
+        if not self._loaded:
+            found_in_cache = memcache.get(self._sid, namespace=NAMESPACE)
 
-            if self._record is None:
-                return False, None, None
+            if found_in_cache is None:
+                return False
             else:
+                self._record = pickle.loads(found_in_cache)
                 self._loaded = True
+
+                self._expires = self._record.expires
+                self._last_accessed = self._record.last_accessed
                 self._data = self._record.data
 
-        return True, self._record.last_accessed, self._record.expires
+        return True
 
     def clear(self):
         super(Backend, self).clear()
         if self._sid:
-            memcache.delete(self._sid)
+            memcache.delete(self._sid, namespace=NAMESPACE)
 
-    def save(self, last_accessed, expires=None, sync_only=False):
+    def save(self, sync_only=False):
+        import logging
+        logging.error(self._sid)
 
-        self._record = memcache.get(self._sid)
+        # todo: implement sync only
+
+        self._record = VishnuSession(
+            self._expires,
+            self._last_accessed,
+            self._data
+        )
+
+        memcache.set(self._sid, pickle.dumps(self._record), namespace=NAMESPACE)
