@@ -15,7 +15,7 @@ class SessionMiddleware(object):  # pylint: disable=R0903
 
     def __call__(self, environ, start_response):
 
-        _thread_local.session = Session()
+        _thread_local.session = Session(environ)
 
         def vishnu_start_response(status, headers, exc_info=None):
             """Our start_response wrapper so we can insert cookie header"""
