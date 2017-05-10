@@ -1,27 +1,8 @@
 from vishnu.backend import Base
+from vishnu.backend import VishnuSession
 
 import memcache
 import pickle
-
-
-class VishnuSession(object):
-
-    def __init__(self, expires, last_accessed, data):
-        self._expires = expires
-        self._last_accessed = last_accessed
-        self._data = data
-
-    @property
-    def expires(self):
-        return self._expires
-
-    @property
-    def last_accessed(self):
-        return self._last_accessed
-
-    @property
-    def data(self):
-        return self._data
 
 
 class Backend(Base):

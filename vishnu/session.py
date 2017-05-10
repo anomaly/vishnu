@@ -24,7 +24,8 @@ ENCRYPT_KEY_MIN_LEN = 32
 DEFAULT_COOKIE_NAME = "vishnu"
 DEFAULT_BACKEND = BackendType.GoogleAppEngineNDB
 DEFAULT_MEMCACHE_HOST = "localhost"
-DEFAULT_MEMCACHE_PORT = "11211"
+DEFAULT_MEMCACHE_PORT = 11211
+DEFAULT_REDIS_PORT = 6379
 
 SIG_LENGTH = 128
 SID_LENGTH = 32
@@ -130,6 +131,8 @@ class Session(object):  # pylint: disable=R0902, R0904
             backend_port = DEFAULT_MEMCACHE_PORT
         elif backend_port is None and backend == BackendType.PyMemcache:
             backend_port = DEFAULT_MEMCACHE_PORT
+        elif backend_port is None and backend == BackendType.Redis:
+            backend_port = DEFAULT_REDIS_PORT
 
         # attempt to load an existing cookie
         self._load_cookie()
@@ -216,6 +219,9 @@ class Session(object):  # pylint: disable=R0902, R0904
             self._backend = Backend(self._sid, host, port)
         elif backend_type == BackendType.PyMemcache:
             from vishnu.backend.memcache_pymemcache import Backend
+            self._backend = Backend(self._sid, host, port)
+        elif backend_type == BackendType.Redis:
+            from vishnu.backend.redis_redis import Backend
             self._backend = Backend(self._sid, host, port)
         else:
             raise ValueError("Unknown backend type: %s" % backend_type)
