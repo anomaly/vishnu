@@ -53,6 +53,8 @@ Vishnu will automatically look for and use the following variables from your ``a
    :header: "Name", "Required", "Default", "Description"
 
     ``VISHNU_BACKEND``, no, ``gae-ndb``, "Which backend to use for storing session information"
+    ``VISHNU_BACKEND_HOST``, no, ``localhost``, "Host which backend is running on"
+    ``VISHNU_BACKEND_PORT``, no, ``11211``, "Port which backed is running on"
     ``VISHNU_COOKIE_NAME``, no, ``vishnu``, "The name to use for the cookie. If omitted it will default to ``vishnu``"
     ``VISHNU_SECRET``, yes, "N/A", "Secret used for HMAC signature"
     ``VISHNU_ENCRYPT_KEY``, no, "N/A", "Key used to encrypt cookie data, it omitted then value will not be encrypted."
@@ -87,7 +89,7 @@ To use vishnu you must add it as a middleware to your WSGI application.
 Setting a Custom Timeout
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each session uses the default timeout specified in ``app.yaml`` but if you want to have particular sessions differ to this you can do the following.
+Each session uses the default timeout specified in your server config but if you want to have particular sessions differ to this you can do the following.
 
 .. code:: python
 
@@ -103,8 +105,8 @@ The timeout is in seconds. To set the timeout to expire at the end of this sessi
     session.timeout = vishnu.session.TIMEOUT_SESSION
     session.save()
 
-Cleaning up Expired Sessions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cleaning up Expired Sessions (Google App Engine NDB backend only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add the following to a cron handler.
 
@@ -118,3 +120,10 @@ Add the following to a cron handler.
 You can alter the period after expired sessions are deleted by passing a value in seconds as ``dormant_for``.
 
 You can also alter the amount of sessions to delete per call using the ``limit`` argument.
+
+.. code:: python
+
+    import vishnu
+
+    while not vishnu.delete_expired_sessions(dormant_for=3600, limit=100):
+        pass

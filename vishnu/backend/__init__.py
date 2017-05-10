@@ -5,6 +5,8 @@ from datetime import datetime
 class BackendType(object):
     GoogleAppEngineMemcache = "gae-memcache"
     GoogleAppEngineNDB = "gae-ndb"
+    PythonMemcached = "python-memcached"
+    PyMemcache = "pymemcache"
 
 
 class Base(object):

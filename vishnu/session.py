@@ -23,6 +23,8 @@ ENCRYPT_KEY_MIN_LEN = 32
 
 DEFAULT_COOKIE_NAME = "vishnu"
 DEFAULT_BACKEND = BackendType.GoogleAppEngineNDB
+DEFAULT_MEMCACHE_HOST = "localhost"
+DEFAULT_MEMCACHE_PORT = "11211"
 
 SIG_LENGTH = 128
 SID_LENGTH = 32
@@ -117,9 +119,21 @@ class Session(object):  # pylint: disable=R0902, R0904
         if backend is None:
             backend = DEFAULT_BACKEND
 
+        backend_host = environ.get("VISHNU_BACKEND_HOST")
+        if backend_host is None and backend == BackendType.PythonMemcached:
+            backend_host = DEFAULT_MEMCACHE_HOST
+        elif backend_host is None and backend == BackendType.PyMemcache:
+            backend_host = DEFAULT_MEMCACHE_HOST
+
+        backend_port = environ.get("VISHNU_BACKEND_PORT")
+        if backend_port is None and backend == BackendType.PythonMemcached:
+            backend_port = DEFAULT_MEMCACHE_PORT
+        elif backend_port is None and backend == BackendType.PyMemcache:
+            backend_port = DEFAULT_MEMCACHE_PORT
+
         # attempt to load an existing cookie
         self._load_cookie()
-        self._configure_backend(backend)
+        self._configure_backend(backend, backend_host, backend_port)
 
     @property
     def cookie_name(self):
@@ -188,15 +202,21 @@ class Session(object):  # pylint: disable=R0902, R0904
         else:
             logging.warn("found cookie with invalid signature")
 
-    def _configure_backend(self, backend_type):
+    def _configure_backend(self, backend_type, host, port):
         """Configures a backend for this session to use"""
 
         if backend_type == BackendType.GoogleAppEngineNDB:
             from vishnu.backend.gae_ndb import Backend
             self._backend = Backend(self._sid)
         elif backend_type == BackendType.GoogleAppEngineMemcache:
-            from vishnu.backend.gae_memcache import Backend
+            from vishnu.backend.memcache_gae import Backend
             self._backend = Backend(self._sid)
+        elif backend_type == BackendType.PythonMemcached:
+            from vishnu.backend.memcache_pythonmemcached import Backend
+            self._backend = Backend(self._sid, host, port)
+        elif backend_type == BackendType.PyMemcache:
+            from vishnu.backend.memcache_pymemcache import Backend
+            self._backend = Backend(self._sid, host, port)
         else:
             raise ValueError("Unknown backend type: %s" % backend_type)
 
