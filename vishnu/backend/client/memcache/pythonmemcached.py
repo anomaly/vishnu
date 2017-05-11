@@ -1,14 +1,22 @@
-from vishnu.backend import Base
-from vishnu.backend import VishnuSession
+"""
+Client wrapper for python-memcached memcache library
+https://pypi.python.org/pypi/python-memcached
+"""
+
+from vishnu.backend.client import Base
+from vishnu.backend.client import PicklableSession
 
 import memcache
 import pickle
 
 
-class Backend(Base):
+class Client(Base):
+    """
+    Client object for python-memcached memcache library
+    """
 
     def __init__(self, sid, host, port):
-        super(Backend, self).__init__(sid)
+        super(Client, self).__init__(sid)
         self._memcache = memcache.Client(["%s:%s" % (host, port)])
 
         self._record = None
@@ -31,7 +39,7 @@ class Backend(Base):
         return True
 
     def clear(self):
-        super(Backend, self).clear()
+        super(Client, self).clear()
         if self._sid:
             self._memcache.delete(self._sid)
 
@@ -41,7 +49,7 @@ class Backend(Base):
 
         # todo: implement sync only
 
-        self._record = VishnuSession(
+        self._record = PicklableSession(
             self._expires,
             self._last_accessed,
             self._data

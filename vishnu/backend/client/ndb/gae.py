@@ -1,4 +1,8 @@
-from vishnu.backend import Base
+"""
+Client wrapper for Google App Engine NDB
+https://cloud.google.com/appengine/docs/standard/python/ndb/
+"""
+from vishnu.backend.client import Base
 
 from google.appengine.ext import ndb
 
@@ -10,10 +14,13 @@ class VishnuSession(ndb.Model):  # pylint: disable=R0903, W0232
     data = ndb.PickleProperty(required=True, compressed=True)
 
 
-class Backend(Base):
+class Client(Base):
+    """
+    Client object for Google App Engine NDB
+    """
 
     def __init__(self, sid):
-        super(Backend, self).__init__(sid)
+        super(Client, self).__init__(sid)
         self._model = None
 
     def load(self):

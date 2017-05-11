@@ -1,36 +1,23 @@
-from vishnu.backend import Base
-
-import pickle
+"""
+Client wrapper for Google App Engine memcache API
+https://cloud.google.com/appengine/docs/standard/python/memcache/
+"""
+from vishnu.backend.client import Base
+from vishnu.backend.client import PicklableSession
 
 from google.appengine.api import memcache
+import pickle
 
 NAMESPACE = "vishnu"
 
 
-class VishnuSession(object):
-
-    def __init__(self, expires, last_accessed, data):
-        self._expires = expires
-        self._last_accessed = last_accessed
-        self._data = data
-
-    @property
-    def expires(self):
-        return self._expires
-
-    @property
-    def last_accessed(self):
-        return self._last_accessed
-
-    @property
-    def data(self):
-        return self._data
-
-
-class Backend(Base):
+class Client(Base):
+    """
+    Client object for Google App Engine memcache API
+    """
 
     def __init__(self, sid):
-        super(Backend, self).__init__(sid)
+        super(Client, self).__init__(sid)
         self._record = None
 
     def load(self):
@@ -51,7 +38,7 @@ class Backend(Base):
         return True
 
     def clear(self):
-        super(Backend, self).clear()
+        super(Client, self).clear()
         if self._sid:
             memcache.delete(self._sid, namespace=NAMESPACE)
 
@@ -61,7 +48,7 @@ class Backend(Base):
 
         # todo: implement sync only
 
-        self._record = VishnuSession(
+        self._record = PicklableSession(
             self._expires,
             self._last_accessed,
             self._data

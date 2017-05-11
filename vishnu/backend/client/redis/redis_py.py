@@ -1,22 +1,30 @@
-from vishnu.backend import Base
-from vishnu.backend import VishnuSession
+"""
+Client wrapper for python redis library
+https://pypi.python.org/pypi/redis
+"""
+from vishnu.backend.client import Base
+from vishnu.backend.client import PicklableSession
 
 import pickle
-from pymemcache.client.base import Client
+import redis
 
 
-class Backend(Base):
+class Client(Base):
+    """
+    Client object for python redis library
+    """
 
-    def __init__(self, sid, host, port):
-        super(Backend, self).__init__(sid)
-        self._memcache = Client((host, int(port)))
+    def __init__(self, sid, host, port, db):
+        super(Client, self).__init__(sid)
+
+        self._redis = redis.StrictRedis(host=host, port=port, db=db)
 
         self._record = None
 
     def load(self):
 
         if not self._loaded:
-            found_in_cache = self._memcache.get(self._sid)
+            found_in_cache = self._redis.get(self._sid)
 
             if found_in_cache is None:
                 return False
@@ -31,9 +39,9 @@ class Backend(Base):
         return True
 
     def clear(self):
-        super(Backend, self).clear()
+        super(Client, self).clear()
         if self._sid:
-            self._memcache.delete(self._sid)
+            self._redis.delete(self._sid)
 
     def save(self, sync_only=False):
         import logging
@@ -41,10 +49,10 @@ class Backend(Base):
 
         # todo: implement sync only
 
-        self._record = VishnuSession(
+        self._record = PicklableSession(
             self._expires,
             self._last_accessed,
             self._data
         )
 
-        self._memcache.set(self._sid, pickle.dumps(self._record))
+        self._redis.set(self._sid, pickle.dumps(self._record))
