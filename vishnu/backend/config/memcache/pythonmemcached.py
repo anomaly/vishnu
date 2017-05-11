@@ -14,7 +14,7 @@ class Config(Base):
     """
 
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT):
-        super(Base, self).__init__()
+        super(Config, self).__init__()
 
         # todo: check valid host
         self._host = host

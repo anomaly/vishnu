@@ -116,7 +116,7 @@ def test_timeout():
     from vishnu.session import Config
 
     default = Config(secret=SECRET)
-    assert default.timeout == None
+    assert default.timeout is None
 
     custom_timeout = 1200
     custom = Config(secret=SECRET, timeout=custom_timeout)

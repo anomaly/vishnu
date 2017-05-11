@@ -14,6 +14,14 @@ class Config(Base):
     """
 
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, db=DEFAULT_DB):
+        """
+        :param host: host on which redis is available
+        :rtype: string
+        :param port: port on which redis is running
+        :rtype: int
+        :param db: db
+        :rtype: int
+        """
         super(Config, self).__init__()
 
         # todo: check valid host
