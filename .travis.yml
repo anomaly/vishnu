@@ -4,7 +4,6 @@ python:
   - "pypy"
 os:
   - linux
-  - osx
 install:
   - pip install -U coveralls
 script:
