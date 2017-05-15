@@ -47,7 +47,12 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["pycrypto==2.6.1"],
-    tests_require=['pytest'],
+    tests_require=[
+        'pytest',
+        'redis',
+        'pymemcache',
+        'python-memcached'
+    ],
     setup_requires=['pytest-runner'],
     extras_require={
         'devel': ['tox'],
