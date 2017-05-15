@@ -10,3 +10,7 @@ after_success:
   - coveralls
 notifications:
   email: false
+
+services:
+  - memcached
+  - redis-server
