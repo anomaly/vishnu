@@ -2,6 +2,9 @@ language: python
 python:
   - "2.7"
   - "pypy"
+os:
+  - linux
+  - osx
 install:
   - pip install -U coveralls
 script:
