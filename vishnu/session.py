@@ -157,7 +157,7 @@ class Session(object):
         self._expire_cookie = False
         self._started = False
 
-        self._sid = uuid.uuid4().hex
+        self._sid = Session.generate_sid()
         self._loaded = False
         self._needs_save = False
 
@@ -171,6 +171,15 @@ class Session(object):
         # attempt to load an existing cookie
         self._load_cookie()
         self._backend_client = self._config.backend.client_from_config(self._sid)
+
+    @classmethod
+    def generate_sid(cls):
+        """
+        :return: generates a unique ID for use by a session
+        :rtype: string
+        """
+        return uuid.uuid4().hex
+
 
     @property
     def started(self):

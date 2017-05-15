@@ -63,6 +63,8 @@ class Base(object):
 
     @abc.abstractmethod
     def clear(self):
+        self._loaded = False
+
         self._expires = None
         self._last_accessed = None
         self._data = {}
