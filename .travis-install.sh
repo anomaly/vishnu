@@ -7,10 +7,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
     case "${TOXENV}" in
         py27)
-            brew install python2
-            ;;
-        pypy2)
-            brew install pypy
+            brew install python
             ;;
     esac
 fi
