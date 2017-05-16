@@ -5,6 +5,13 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew update
     brew install pyenv-virtualenv
 
+    brew install memcached
+    brew install redis
+
+    brew tap homebrew/services
+    brew services start memcached
+    brew services start redis
+
     case "${TOXENV}" in
         py27)
             brew install python
