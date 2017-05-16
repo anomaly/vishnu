@@ -13,5 +13,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 fi
 
 pip install -U virtualenv
+virtualenv vishnu
+vishnu/bin/activate
+
 pip install -U tox
 pip install -U coveralls
