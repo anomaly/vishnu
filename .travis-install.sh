@@ -2,13 +2,12 @@
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-    sudo brew update
-    sudo brew install python2
-    sudo brew install pyenv-virtualenv
+    brew update
+    brew install pyenv-virtualenv
 
     case "${TOXENV}" in
         py27)
-            # Install some custom Python 2.7 requirements on OS X
+            brew install python2
             ;;
     esac
 fi
