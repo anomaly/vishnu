@@ -11,11 +11,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
             # Install some custom Python 2.7 requirements on OS X
             ;;
     esac
-else
-    # Install some custom requirements on Linux
 fi
 
-pip install virtualenv
-
+pip install -U virtualenv
 pip install -U tox
 pip install -U coveralls
