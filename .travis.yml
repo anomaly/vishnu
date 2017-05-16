@@ -1,18 +1,18 @@
 language: python
-python:
-  - "2.7"
-  - "pypy"
-os:
-  - linux
+
+matrix:
+  include:
+    - os: linux
+      python: 2.7
+    - os: osx
+      language: generic
+      env: TOXENV=py27
+
 install:
-  - pip install -U coveralls
-script:
-  - coverage run --source=vishnu setup.py test
+  - ./travis-install.sh
+script: make tests
 after_success:
   - coveralls
-notifications:
-  email: false
-
 services:
   - memcached
   - redis-server
