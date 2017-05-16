@@ -1,15 +1,12 @@
 language: python
-
-matrix:
-  include:
-    - os: linux
-      python: 2.7
-    - os: osx
-      language: generic
-      env: TOXENV=py27
-
+python:
+ - "2.7"
+ - "pypy"
+os:
+  - linux
+  - osx
 install:
-  - ./travis-install.sh
+  - ./.travis-install.sh
 script: make tests
 after_success:
   - coveralls
