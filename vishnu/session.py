@@ -31,13 +31,18 @@ EXPIRES_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
 class Config(object):
 
-    def __init__(self, secret, cookie_name=DEFAULT_COOKIE_NAME, encrypt_key=None,
-                 secure=True, domain=None, path=DEFAULT_PATH, http_only=True,
+    def __init__(self, secret, cookie_name=None, encrypt_key=None,
+                 secure=True, domain=None, path=None, http_only=True,
                  auto_save=False, timeout=None, backend=None):
 
         self._secret = secret
         if self._secret is None or len(self._secret) < SECRET_MIN_LEN:
             raise ValueError("Secret should be at least %i characters" % SECRET_MIN_LEN)
+
+        if cookie_name is None:
+            cookie_name = DEFAULT_COOKIE_NAME
+
+        # todo: check cookie name is a string
 
         self._cookie_name = cookie_name
 
@@ -45,13 +50,26 @@ class Config(object):
         if self._encrypt_key is not None and len(self._encrypt_key) < ENCRYPT_KEY_MIN_LEN:
             raise ValueError("Encrypt key should be at least %i characters" % ENCRYPT_KEY_MIN_LEN)
 
+        # todo: check secure is a bool
+
         self._secure = secure
+
+        # todo: check domain is a string
 
         self._domain = domain
 
+        if path is None:
+            path = DEFAULT_PATH
+
+        # todo: check path is a string
+
         self._path = path
 
+        # todo: check http_only is a bool
+
         self._http_only = http_only
+
+        # todo: check auto save is a bool
 
         self._auto_save = auto_save
 
@@ -65,7 +83,7 @@ class Config(object):
             if self._timeout < 0:
                 raise TypeError("timeout must be a non-negative integer")
 
-        if backend is not None and not isinstance(backend, BackendConfig):
+        if backend is None or not isinstance(backend, BackendConfig):
             raise TypeError("unknown backend configuration received")
         self._backend = backend
 

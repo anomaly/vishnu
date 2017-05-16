@@ -51,7 +51,9 @@ setup(
         'pytest',
         'redis',
         'pymemcache',
-        'python-memcached'
+        'python-memcached',
+        'webapp2',
+        'webtest'
     ],
     setup_requires=['pytest-runner'],
     extras_require={
