@@ -336,6 +336,7 @@ class Session(object):
 
         self._backend_client.save(sync_only)
 
+        self._expire_cookie = False
         self._send_cookie = True
         self._needs_save = False
 
