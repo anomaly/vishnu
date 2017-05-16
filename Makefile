@@ -12,7 +12,7 @@ help:
 
 .PHONY: test
 test:
-	py.test tests
+	python setup.py test
 
 .PHONY: tests
 tests:
