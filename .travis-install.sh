@@ -9,6 +9,9 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
         py27)
             brew install python2
             ;;
+        pypy2)
+            brew install pypy
+            ;;
     esac
 fi
 

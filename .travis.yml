@@ -7,10 +7,11 @@ matrix:
       python: 2.7
     - os: osx
       language: generic
+      env: TOXENV=py27
 
 install:
   - ./.travis-install.sh
-script: make tests
+script: make test
 after_success:
   - coveralls
 services:
