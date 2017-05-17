@@ -3,6 +3,7 @@ import pytest
 from vishnu.session import Session
 from vishnu.backend import PyMemcache
 
+
 @pytest.fixture
 def memcache_client(sid=None):
 
@@ -61,6 +62,9 @@ def test_save():
     # save some data to the session
     clientA["key"] = "value"
     clientA.save()
+
+    import time
+    time.sleep(1)
 
     # start another client and check data was loaded
     clientB = memcache_client(sid)

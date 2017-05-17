@@ -44,8 +44,6 @@ class Client(Base):
             self._memcache.delete(self._sid)
 
     def save(self, sync_only=False):
-        import logging
-        logging.error(self._sid)
 
         # todo: implement sync only
 

@@ -43,8 +43,6 @@ class Client(Base):
             memcache.delete(self._sid, namespace=NAMESPACE)
 
     def save(self, sync_only=False):
-        import logging
-        logging.error(self._sid)
 
         # todo: implement sync only
 
