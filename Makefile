@@ -10,6 +10,10 @@ help:
 	@echo "  release    makes the release"
 	@echo "  clean      cleans the build environment"
 
+.PHONY: test
+test:
+	python setup.py test
+
 .PHONY: tests
 tests:
 	pyenv local 2.6.9 2.7.13 3.4.5 3.5.2 3.6.1
