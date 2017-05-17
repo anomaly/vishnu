@@ -7,7 +7,7 @@ matrix:
       python: 2.7
     - os: linux
       sudo: required
-      python pypy
+      python: pypy
     - os: osx
       language: generic
       env: TOXENV=py27
