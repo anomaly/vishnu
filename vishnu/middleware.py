@@ -10,15 +10,18 @@ from vishnu.session import Session
 class SessionMiddleware(object):  # pylint: disable=R0903
     """WSGI middleware for adding support for sessions."""
 
-    def __init__(self, app):
+    def __init__(self, app, config):
         self.app = app
+        self.config = config
 
     def __call__(self, environ, start_response):
 
-        _thread_local.session = Session()
+        _thread_local.session = Session(environ, self.config)
 
         def vishnu_start_response(status, headers, exc_info=None):
-            """Our start_response wrapper so we can insert cookie header"""
+            """
+            Our start_response wrapper so we can insert cookie header
+            """
             if _thread_local.session.needs_save and _thread_local.session.auto_save:
                 _thread_local.session.save()
             elif _thread_local.session.needs_save and _thread_local.session.started:

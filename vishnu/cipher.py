@@ -12,19 +12,25 @@ import hashlib
 
 
 class AESCipher(object):
-    """Helper class for using AES encryption."""
+    """
+    Helper class for using AES encryption.
+    """
 
     def __init__(self, key):
         self._key = hashlib.sha256(key.encode('utf-8')).digest()
 
     @classmethod
     def pad(cls, data):
-        """Pads data to match AES block size"""
+        """
+        Pads data to match AES block size
+        """
         return data + (AES.block_size - len(data) % AES.block_size) * chr(AES.block_size - len(data) % AES.block_size)
 
     @classmethod
     def unpad(cls, data):
-        """Unpads data that has been padded"""
+        """
+        Unpads data that has been padded
+        """
         return data[:-ord(data[len(data)-1:])]
 
     def encrypt(self, raw):

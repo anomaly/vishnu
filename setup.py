@@ -16,17 +16,17 @@ from vishnu import __version__
 
 setup(
     name="vishnu",
-    version = __version__,
-    description = 'Sessions for the Google App Engine Python runtime',
-    url = 'https://github.com/anomaly/vishnu.git',
-    long_description = open("README.rst").read(),
-    download_url = 'https://github.com/anomaly/vishnu/archive/' + __version__ + '.tar.gz',
-    license = 'Apache 2.0',
-    author = 'Anomaly Software',
-    author_email = 'support@anomaly.net.au',
-    maintainer = 'Anomaly Software',
-    maintainer_email = 'support@anomaly.net.au',
-    classifiers = [
+    version=__version__,
+    description='Sessions for the Google App Engine Python runtime',
+    url='https://github.com/anomaly/vishnu.git',
+    long_description=open("README.rst").read(),
+    download_url='https://github.com/anomaly/vishnu/archive/' + __version__ + '.tar.gz',
+    license='Apache 2.0',
+    author='Anomaly Software',
+    author_email='support@anomaly.net.au',
+    maintainer='Anomaly Software',
+    maintainer_email='support@anomaly.net.au',
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'License :: OSI Approved',
@@ -43,10 +43,23 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    platforms = ['any'],
-    packages = find_packages(),
-    include_package_data = True,
-    install_requires = ["pycrypto==2.6.1"],
-    tests_require = ['pytest'],
-    setup_requires = ['pytest-runner'],
+    platforms=['any'],
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=["pycrypto==2.6.1"],
+    tests_require=[
+        'pytest',
+        'redis',
+        'pymemcache',
+        'python-memcached',
+        'webapp2',
+        'webtest'
+    ],
+    setup_requires=['pytest-runner'],
+    extras_require={
+        'devel': ['tox'],
+        'pymemcache': ['pymemcache'],
+        'python-memcached': ['python-memcached'],
+        'redis': ['redis'],
+    }
 )

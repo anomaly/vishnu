@@ -10,6 +10,10 @@ help:
 	@echo "  release    makes the release"
 	@echo "  clean      cleans the build environment"
 
+.PHONY: test
+test:
+	python setup.py test
+
 .PHONY: tests
 tests:
 	tox
