@@ -3,9 +3,13 @@ vishnu
 
 Sessions for python WSGI applications.
 
-.. image:: https://img.shields.io/pypi/dm/Django.svg
+.. image:: https://img.shields.io/pypi/dm/vishnu.svg
     :target: https://pypi.python.org/pypi/vishnu
-    :alt: Download
+    :alt: Downloads
+
+.. image:: https://badge.fury.io/py/vishnu.svg
+    :target: https://pypi.python.org/pypi/vishnu
+    :alt: Latest Version
 
 .. image:: https://travis-ci.org/anomaly/vishnu.svg?branch=master&maxAge=2592000
    :target: https://travis-ci.org/anomaly/vishnu/
