@@ -182,13 +182,16 @@ class Session(object):
         # todo: check config is correct class
         self._config = config
 
-        # calculate the expiry date if a timeout exists
-        if self._config.timeout:
-            self._calculate_expires()
-
         # attempt to load an existing cookie
         self._load_cookie()
         self._backend_client = self._config.backend.client_from_config(self._sid)
+
+        # calculate the expiry date if a timeout exists (must be done after client setup)
+        if self._config.timeout:
+            self._calculate_expires()
+
+
+
 
     @classmethod
     def generate_sid(cls):
@@ -197,7 +200,6 @@ class Session(object):
         :rtype: string
         """
         return uuid.uuid4().hex
-
 
     @property
     def started(self):
