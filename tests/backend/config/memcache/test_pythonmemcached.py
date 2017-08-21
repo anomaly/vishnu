@@ -1,6 +1,7 @@
 import pytest
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_default():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_HOST, DEFAULT_PORT
@@ -10,6 +11,7 @@ def test_default():
     assert config.port == DEFAULT_PORT
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_custom_host():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_PORT
@@ -20,6 +22,7 @@ def test_custom_host():
     assert config.port == DEFAULT_PORT
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_invalid_host():
     from vishnu.backend import PythonMemcached
 
@@ -27,6 +30,7 @@ def test_invalid_host():
         PythonMemcached(host=23)
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_custom_port():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_HOST
@@ -37,6 +41,7 @@ def test_custom_port():
     assert config.port == custom_port
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_invalid_port():
     from vishnu.backend import PythonMemcached
 

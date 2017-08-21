@@ -4,11 +4,13 @@ Helper classes for encryption.
 With a little help from
 http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256
 """
+from __future__ import unicode_literals
 
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
 from Crypto import Random
 import hashlib
+import sys
 
 
 class AESCipher(object):
@@ -24,14 +26,27 @@ class AESCipher(object):
         """
         Pads data to match AES block size
         """
-        return data + (AES.block_size - len(data) % AES.block_size) * chr(AES.block_size - len(data) % AES.block_size)
+        if sys.version_info > (3, 0):
+            try:
+                data = data.encode("utf-8")
+            except AttributeError:
+                pass
+
+            length = AES.block_size - (len(data) % AES.block_size)
+            data += bytes([length]) * length
+            return data
+        else:
+            return data + (AES.block_size - len(data) % AES.block_size) * chr(AES.block_size - len(data) % AES.block_size)
 
     @classmethod
     def unpad(cls, data):
         """
         Unpads data that has been padded
         """
-        return data[:-ord(data[len(data)-1:])]
+        if sys.version_info > (3, 0):
+            return data[:-ord(data[len(data)-1:])].decode()
+        else:
+            return data[:-ord(data[len(data)-1:])]
 
     def encrypt(self, raw):
         """
@@ -52,5 +67,6 @@ class AESCipher(object):
         """
         decoded = b64decode(encrypted)
         init_vec = decoded[:AES.block_size]
-        ciper = AES.new(self._key, AES.MODE_CBC, init_vec)
-        return AESCipher.unpad(ciper.decrypt(decoded[AES.block_size:]))
+        cipher = AES.new(self._key, AES.MODE_CBC, init_vec)
+
+        return AESCipher.unpad(cipher.decrypt(decoded[AES.block_size:]))

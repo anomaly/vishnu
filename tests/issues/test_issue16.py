@@ -116,6 +116,7 @@ def test_pymemcache():
     assert private_resp.status_int == 401
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_python_memcached():
     from vishnu.backend import PythonMemcached
     app = test_app(backend=PythonMemcached())

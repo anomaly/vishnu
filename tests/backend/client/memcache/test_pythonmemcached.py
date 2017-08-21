@@ -14,6 +14,7 @@ def memcache_client(sid=None):
     return client
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_load():
     sid = Session.generate_sid()
     clientA = memcache_client(sid)
@@ -32,6 +33,7 @@ def test_load():
     assert clientB.load() is True
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_clear():
     client = memcache_client()
 
@@ -48,6 +50,7 @@ def test_clear():
     assert client.load() is False
 
 
+@pytest.mark.skip(reason="python-memcached is no longer supported")
 def test_save():
     sid = Session.generate_sid()
     clientA = memcache_client(sid)
