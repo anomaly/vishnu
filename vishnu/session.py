@@ -4,7 +4,7 @@ Vishnu session.
 
 from __future__ import absolute_import
 
-from Cookie import SimpleCookie
+from http.cookies import SimpleCookie
 
 from datetime import datetime, timedelta
 import hashlib

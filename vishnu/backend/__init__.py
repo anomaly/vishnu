@@ -1,10 +1,10 @@
 # memcache
-from config.memcache.gae import Config as GoogleAppEngineMemcache
-from config.memcache.pymemcache import Config as PyMemcache
-from config.memcache.pythonmemcached import Config as PythonMemcached
+from vishnu.backend.config.memcache.gae import Config as GoogleAppEngineMemcache
+from vishnu.backend.config.memcache.pymemcache import Config as PyMemcache
+from vishnu.backend.config.memcache.pythonmemcached import Config as PythonMemcached
 
 # redis
-from config.redis.redis_py import Config as Redis
+from vishnu.backend.config.redis.redis_py import Config as Redis
 
 # NDB
-from config.ndb.gae import Config as GoogleAppEngineNDB
+from vishnu.backend.config.ndb.gae import Config as GoogleAppEngineNDB

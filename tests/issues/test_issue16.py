@@ -2,12 +2,12 @@
 Terminating and starting a session within same request fails to send cookie
 https://github.com/anomaly/vishnu/issues/16
 """
+import falcon
 import pytest
 import vishnu
-import webapp2
 
 
-class BaseHandler(webapp2.RequestHandler):
+class BaseHandler(object):
 
     @property
     def session(self):
@@ -20,23 +20,23 @@ class BaseHandler(webapp2.RequestHandler):
 
 class PrivateHandler(BaseHandler):
 
-    def get(self):
+    def on_get(self, req, resp):
 
         if self.session.get("user") == "james":
-            self.response.status = 200
+            resp.status = falcon.HTTP_200
         else:
-            self.response.status = 401
+            resp.status = falcon.HTTP_401
 
 
 class PublicHandler(BaseHandler):
 
-    def get(self):
-        self.response.status = 200
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200
 
 
 class LoginHandler(BaseHandler):
 
-    def post(self):
+    def on_post(self, req, resp):
 
         self.session["user"] = "james"
         self.session.save()
@@ -46,16 +46,16 @@ class LoginHandler(BaseHandler):
         self.session["user"] = "james"
         self.session.save()
 
-        self.response.status = 200
+        resp.status = falcon.HTTP_200
 
 
 class LogoutHandler(BaseHandler):
 
-    def get(self):
+    def on_get(self, req, resp):
 
         self.session.terminate()
 
-        self.response.status = 200
+        resp.status = falcon.HTTP_200
 
 
 @pytest.fixture
@@ -64,18 +64,17 @@ def test_app(backend):
     from vishnu.middleware import SessionMiddleware
     from vishnu.session import Config
 
-    app = webapp2.WSGIApplication([
-        (r'/private', PrivateHandler),
-        (r'/public', PublicHandler),
-        (r'/login/save', LoginHandler),
-        (r'/logout', LogoutHandler)
-    ], debug=True)
+    api = falcon.API()
+    api.add_route("/private", PrivateHandler())
+    api.add_route("/public", PublicHandler())
+    api.add_route("/login/save", LoginHandler())
+    api.add_route("/logout", LogoutHandler())
 
     config = Config(
         secret="OVc1Mbt79AK5Pmi6sWnJnXZvEPNO3BnI",
         backend=backend
     )
-    session = SessionMiddleware(app, config)
+    session = SessionMiddleware(api, config)
 
     return TestApp(app=session, extra_environ={'wsgi.url_scheme': 'https'})
 

@@ -46,13 +46,16 @@ setup(
     platforms=['any'],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["pycrypto==2.6.1"],
+    install_requires=[
+        "future",
+        "pycrypto==2.6.1"
+    ],
     tests_require=[
         'pytest',
         'redis',
         'pymemcache',
         'python-memcached',
-        'webapp2',
+        'falcon',
         'webtest'
     ],
     setup_requires=['pytest-runner'],
