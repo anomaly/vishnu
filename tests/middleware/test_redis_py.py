@@ -190,6 +190,43 @@ def test_encrypted():
     assert private_resp.status_int == 401
 
 
+def test_unencrypted():
+    from vishnu.backend import Redis
+    app = test_app(use_https=True, encrypt=False, backend=Redis())
+
+    # check public before login
+    public_resp = app.get('/public')
+    assert public_resp.status_int == 200
+
+    # check private before login
+    private_resp = app.get('/private', status=401)
+    assert private_resp.status_int == 401
+
+    # start session (manual save)
+    login_resp = app.post("/login/save")
+    assert login_resp.status_int == 200
+
+    # check public after login
+    public_resp = app.get('/public')
+    assert public_resp.status_int == 200
+
+    # check private after login
+    private_resp = app.get('/private')
+    assert private_resp.status_int == 200
+
+    # end session
+    logout_resp = app.get("/logout")
+    assert logout_resp.status_int == 200
+
+    # check public after logout
+    public_resp = app.get("/public")
+    assert public_resp.status_int == 200
+
+    # check private after logout
+    private_resp = app.get("/private", status=401)
+    assert private_resp.status_int == 401
+
+
 def test_insecure_http():
     from vishnu.backend import Redis
     app = test_app(use_https=False, secure=False, backend=Redis())
