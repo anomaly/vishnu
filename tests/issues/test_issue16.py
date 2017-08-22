@@ -79,6 +79,43 @@ def test_app(backend):
     return TestApp(app=session, extra_environ={'wsgi.url_scheme': 'https'})
 
 
+def test_pylibmc():
+    from vishnu.backend import Pylibmc
+    app = test_app(backend=Pylibmc())
+
+    # check public before login
+    public_resp = app.get('/public')
+    assert public_resp.status_int == 200
+
+    # check private before login
+    private_resp = app.get('/private', status=401)
+    assert private_resp.status_int == 401
+
+    # start session (manual save)
+    login_resp = app.post("/login/save")
+    assert login_resp.status_int == 200
+
+    # check public after login
+    public_resp = app.get('/public')
+    assert public_resp.status_int == 200
+
+    # check private after login
+    private_resp = app.get('/private')
+    assert private_resp.status_int == 200
+
+    # end session
+    logout_resp = app.get("/logout")
+    assert logout_resp.status_int == 200
+
+    # check public after logout
+    public_resp = app.get("/public")
+    assert public_resp.status_int == 200
+
+    # check private after logout
+    private_resp = app.get("/private", status=401)
+    assert private_resp.status_int == 401
+
+
 def test_pymemcache():
     from vishnu.backend import PyMemcache
     app = test_app(backend=PyMemcache())

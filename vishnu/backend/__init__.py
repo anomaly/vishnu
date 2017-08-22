@@ -1,5 +1,6 @@
 # memcache
 from vishnu.backend.config.memcache.gae import Config as GoogleAppEngineMemcache
+from vishnu.backend.config.memcache.pylibmc import Config as Pylibmc
 from vishnu.backend.config.memcache.pymemcache import Config as PyMemcache
 from vishnu.backend.config.memcache.pythonmemcached import Config as PythonMemcached
 

@@ -1,7 +1,7 @@
 import pytest
 
 from vishnu.session import Session
-from vishnu.backend import PyMemcache
+from vishnu.backend import Pylibmc
 
 
 @pytest.fixture
@@ -10,7 +10,7 @@ def memcache_client(sid=None):
     if sid is None:
         sid = Session.generate_sid()
 
-    config = PyMemcache()
+    config = Pylibmc()
     client = config.client_from_config(sid)
     return client
 

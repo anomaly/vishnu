@@ -53,6 +53,7 @@ setup(
     tests_require=[
         'pytest',
         'redis',
+        'pylibmc',
         'pymemcache',
         'python-memcached',
         'falcon',
@@ -60,7 +61,8 @@ setup(
     ],
     setup_requires=['pytest-runner'],
     extras_require={
-        'devel': ['tox', 'tox-pyenv'],
+        'devel': ['tox', 'tox-pyenv', 'pytest'],
+        'pylibmc': ['pylibmc'],
         'pymemcache': ['pymemcache'],
         'python-memcached': ['python-memcached'],
         'redis': ['redis'],

@@ -26,7 +26,7 @@ def test_custom_host():
 def test_invalid_host():
     from vishnu.backend import PythonMemcached
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(host=23)
 
 
@@ -45,8 +45,8 @@ def test_custom_port():
 def test_invalid_port():
     from vishnu.backend import PythonMemcached
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(port="string")
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(port=-100)
