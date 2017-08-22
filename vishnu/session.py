@@ -4,12 +4,14 @@ Vishnu session.
 
 from __future__ import absolute_import
 
+from http.cookies import Morsel
 from http.cookies import SimpleCookie
 
 from datetime import datetime, timedelta
 import hashlib
 import hmac
 import logging
+import sys
 import uuid
 
 from vishnu.cipher import AESCipher
@@ -250,13 +252,14 @@ class Session(object):
         if not vishnu_keys:
             return
 
-        cookie_value = cookie[vishnu_keys[0]].value
+        morsel = cookie[vishnu_keys[0]]
+        morsel_value = morsel.value
+
         if self._config.encrypt_key:
-
             cipher = AESCipher(self._config.encrypt_key)
-            cookie_value = cipher.decrypt(cookie_value)
+            morsel_value = cipher.decrypt(morsel_value)
 
-        received_sid = Session.decode_sid(self._config.secret, cookie_value)
+        received_sid = Session.decode_sid(self._config.secret, morsel_value)
         if received_sid:
             self._sid = received_sid
         else:
@@ -266,33 +269,39 @@ class Session(object):
         """Generates HTTP header for this cookie."""
 
         if self._send_cookie:
-
+            morsel = Morsel()
             cookie_value = Session.encode_sid(self._config.secret, self._sid)
             if self._config.encrypt_key:
                 cipher = AESCipher(self._config.encrypt_key)
                 cookie_value = cipher.encrypt(cookie_value)
 
-            header = "%s=%s;" % (self._config.cookie_name, cookie_value)
+                if sys.version_info > (3, 0):
+                    cookie_value = cookie_value.decode()
 
+            morsel.set(self._config.cookie_name, cookie_value, cookie_value)
+
+            # domain
             if self._config.domain:
-                header += " Domain=%s;" % self._config.domain
+                morsel["domain"] = self._config.domain
 
+            # path
             if self._config.path:
-                header += " Path=%s;" % self._config.path
-
-            # expire the cookie
+                morsel["path"] = self._config.path
+            # expires
             if self._expire_cookie:
-                header += " Expires=Wed, 01-Jan-1970 00:00:00 GMT;"
-            # set the cookie expiry
+                morsel["expires"] = "Wed, 01-Jan-1970 00:00:00 GMT"
             elif self._backend_client.expires:
-                header += " Expires=%s;" % self._backend_client.expires.strftime(EXPIRES_FORMAT)
+                morsel["expires"] = self._backend_client.expires.strftime(EXPIRES_FORMAT)
 
+            # secure
             if self._config.secure:
-                header += " Secure;"
-            if self._config.http_only:
-                header += " HttpOnly"
+                morsel["secure"] = True
 
-            return header
+            # http only
+            if self._config.http_only:
+                morsel["httponly"] = True
+
+            return morsel.OutputString()
         else:
             return None
 

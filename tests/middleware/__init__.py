@@ -81,8 +81,11 @@ def test_app(cookie_name=None, encrypt=False, auto_save=False,
         cookie_name=cookie_name,
         encrypt_key=encrypt_key,
         auto_save=auto_save,
+        domain=domain,
+        path=path,
         secure=secure,
-        backend=backend
+        http_only=True,
+        backend=backend,
     )
     session = SessionMiddleware(api, config)
 

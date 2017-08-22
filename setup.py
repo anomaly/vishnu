@@ -60,7 +60,7 @@ setup(
     ],
     setup_requires=['pytest-runner'],
     extras_require={
-        'devel': ['tox'],
+        'devel': ['tox', 'tox-pyenv'],
         'pymemcache': ['pymemcache'],
         'python-memcached': ['python-memcached'],
         'redis': ['redis'],
