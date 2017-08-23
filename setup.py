@@ -10,7 +10,6 @@
 """
 
 from setuptools import setup, find_packages
-from setuptools.command.install import install
 
 from vishnu import __version__
 
@@ -36,6 +35,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Session',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
