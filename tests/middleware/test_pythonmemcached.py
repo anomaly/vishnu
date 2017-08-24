@@ -1,9 +1,10 @@
 import pytest
+import sys
 
 from ..middleware import test_app
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_manual_save():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=True, backend=PythonMemcached())
@@ -41,7 +42,7 @@ def test_manual_save():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_auto_save():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=True, auto_save=True, backend=PythonMemcached())
@@ -79,7 +80,7 @@ def test_auto_save():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_default_cookie_name():
     from vishnu.backend import PythonMemcached
     from vishnu.session import DEFAULT_COOKIE_NAME
@@ -119,7 +120,7 @@ def test_default_cookie_name():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_custom_cookie_name():
     from vishnu.backend import PythonMemcached
     custom_cookie_name = "my-cookie-name"
@@ -159,7 +160,7 @@ def test_custom_cookie_name():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_encrypted():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=True, encrypt=True, backend=PythonMemcached())
@@ -197,7 +198,7 @@ def test_encrypted():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_unencrypted():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=True, encrypt=False, backend=PythonMemcached())
@@ -235,7 +236,7 @@ def test_unencrypted():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_insecure_http():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=False, secure=False, backend=PythonMemcached())
@@ -273,7 +274,7 @@ def test_insecure_http():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_secure_https():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=True, secure=True, backend=PythonMemcached())
@@ -311,7 +312,7 @@ def test_secure_https():
     assert private_resp.status_int == 401
 
 
-@pytest.mark.skip(reason="python-memcached is no longer supported")
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_secure_http():
     from vishnu.backend import PythonMemcached
     app = test_app(use_https=False, secure=True, backend=PythonMemcached())
