@@ -1,8 +1,7 @@
 import pytest
-import sys
 
 from vishnu.session import Session
-from vishnu.backend import PythonMemcached
+from vishnu.backend import Pylibmc
 
 
 @pytest.fixture
@@ -11,12 +10,11 @@ def memcache_client(sid=None):
     if sid is None:
         sid = Session.generate_sid()
 
-    config = PythonMemcached()
+    config = Pylibmc()
     client = config.client_from_config(sid)
     return client
 
 
-@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_load():
     sid = Session.generate_sid()
     client_a = memcache_client(sid)
@@ -35,7 +33,6 @@ def test_load():
     assert client_b.load() is True
 
 
-@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_clear():
     client = memcache_client()
 
@@ -52,7 +49,6 @@ def test_clear():
     assert client.load() is False
 
 
-@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_save():
     sid = Session.generate_sid()
     client_a = memcache_client(sid)
@@ -66,6 +62,9 @@ def test_save():
     # save some data to the session
     client_a["key"] = "value"
     client_a.save()
+
+    import time
+    time.sleep(1)
 
     # start another client and check data was loaded
     client_b = memcache_client(sid)

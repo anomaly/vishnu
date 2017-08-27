@@ -10,7 +10,6 @@
 """
 
 from setuptools import setup, find_packages
-from setuptools.command.install import install
 
 from vishnu import __version__
 
@@ -36,6 +35,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Session',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
@@ -46,18 +49,23 @@ setup(
     platforms=['any'],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["pycrypto==2.6.1"],
+    install_requires=[
+        "future",
+        "pycrypto==2.6.1"
+    ],
     tests_require=[
         'pytest',
         'redis',
+        'pylibmc',
         'pymemcache',
         'python-memcached',
-        'webapp2',
+        'falcon',
         'webtest'
     ],
     setup_requires=['pytest-runner'],
     extras_require={
-        'devel': ['tox'],
+        'devel': ['tox', 'tox-pyenv', 'pytest'],
+        'pylibmc': ['pylibmc'],
         'pymemcache': ['pymemcache'],
         'python-memcached': ['python-memcached'],
         'redis': ['redis'],

@@ -2,8 +2,8 @@ from ..middleware import test_app
 
 
 def test_manual_save():
-    from vishnu.backend import Redis
-    app = test_app(use_https=True, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -39,8 +39,8 @@ def test_manual_save():
 
 
 def test_auto_save():
-    from vishnu.backend import Redis
-    app = test_app(use_https=True, auto_save=True, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=True, auto_save=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -76,9 +76,9 @@ def test_auto_save():
 
 
 def test_default_cookie_name():
-    from vishnu.backend import Redis
+    from vishnu.backend import Pylibmc
     from vishnu.session import DEFAULT_COOKIE_NAME
-    app = test_app(use_https=True, backend=Redis())
+    app = test_app(use_https=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -115,9 +115,9 @@ def test_default_cookie_name():
 
 
 def test_custom_cookie_name():
-    from vishnu.backend import Redis
+    from vishnu.backend import Pylibmc
     custom_cookie_name = "my-cookie-name"
-    app = test_app(use_https=True, cookie_name=custom_cookie_name, backend=Redis())
+    app = test_app(use_https=True, cookie_name=custom_cookie_name, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -154,8 +154,8 @@ def test_custom_cookie_name():
 
 
 def test_encrypted():
-    from vishnu.backend import Redis
-    app = test_app(use_https=True, encrypt=True, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=True, encrypt=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -191,8 +191,8 @@ def test_encrypted():
 
 
 def test_unencrypted():
-    from vishnu.backend import Redis
-    app = test_app(use_https=True, encrypt=False, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=True, encrypt=False, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -228,8 +228,8 @@ def test_unencrypted():
 
 
 def test_insecure_http():
-    from vishnu.backend import Redis
-    app = test_app(use_https=False, secure=False, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=False, secure=False, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -265,8 +265,8 @@ def test_insecure_http():
 
 
 def test_secure_https():
-    from vishnu.backend import Redis
-    app = test_app(use_https=True, secure=True, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=True, secure=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')
@@ -302,8 +302,8 @@ def test_secure_https():
 
 
 def test_secure_http():
-    from vishnu.backend import Redis
-    app = test_app(use_https=False, secure=True, backend=Redis())
+    from vishnu.backend import Pylibmc
+    app = test_app(use_https=False, secure=True, backend=Pylibmc())
 
     # check public before login
     public_resp = app.get('/public')

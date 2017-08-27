@@ -1,6 +1,8 @@
 import pytest
+import sys
 
 
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_default():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_HOST, DEFAULT_PORT
@@ -10,6 +12,7 @@ def test_default():
     assert config.port == DEFAULT_PORT
 
 
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_custom_host():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_PORT
@@ -20,13 +23,15 @@ def test_custom_host():
     assert config.port == DEFAULT_PORT
 
 
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_invalid_host():
     from vishnu.backend import PythonMemcached
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(host=23)
 
 
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_custom_port():
     from vishnu.backend import PythonMemcached
     from vishnu.backend.config.memcache import DEFAULT_HOST
@@ -37,11 +42,12 @@ def test_custom_port():
     assert config.port == custom_port
 
 
+@pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_invalid_port():
     from vishnu.backend import PythonMemcached
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(port="string")
 
-    with pytest.raises(TypeError) as exp:
+    with pytest.raises(TypeError):
         PythonMemcached(port=-100)

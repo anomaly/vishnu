@@ -7,10 +7,19 @@ matrix:
       python: 2.7
     - os: linux
       sudo: required
-      python: pypy
-    - os: osx
-      language: generic
-      env: TOXENV=py27
+      python: 3.4
+    - os: linux
+      sudo: required
+      python: 3.5
+    - os: linux
+      sudo: required
+      python: 3.6
+#    - os: linux
+#      sudo: required
+#      python: pypy
+#    - os: osx
+#      language: generic
+#      env: TOXENV=py27
 
 install:
   - ./.travis-install.sh

@@ -17,20 +17,20 @@ def memcache_client(sid=None):
 
 def test_load():
     sid = Session.generate_sid()
-    clientA = memcache_client(sid)
+    client_a = memcache_client(sid)
 
     # try to load (not started yet)
-    assert clientA.load() == False
+    assert client_a.load() is False
 
     # save
-    clientA.save()
+    client_a.save()
 
     # try to load (should be started)
-    assert clientA.load() == True
+    assert client_a.load() is True
 
     # start new client and check already started
-    clientB = memcache_client(sid)
-    assert clientB.load() == True
+    client_b = memcache_client(sid)
+    assert client_b.load() is True
 
 
 def test_clear():
@@ -40,34 +40,34 @@ def test_clear():
     client.save()
 
     # try to load (should be started)
-    assert client.load() == True
+    assert client.load() is True
 
     # clear
     client.clear()
 
     # try to load (not started yet)
-    assert client.load() == False
+    assert client.load() is False
 
 
 def test_save():
     sid = Session.generate_sid()
-    clientA = memcache_client(sid)
+    client_a = memcache_client(sid)
 
-    assert clientA.load() == False
+    assert client_a.load() is False
 
-    clientA.save()
+    client_a.save()
 
-    assert clientA.load() == True
+    assert client_a.load() is True
 
     # save some data to the session
-    clientA["key"] = "value"
-    clientA.save()
+    client_a["key"] = "value"
+    client_a.save()
 
     import time
     time.sleep(1)
 
     # start another client and check data was loaded
-    clientB = memcache_client(sid)
+    client_b = memcache_client(sid)
 
-    assert clientB.load() == True
-    assert clientB.get("key") == "value"
+    assert client_b.load() is True
+    assert client_b.get("key") == "value"
