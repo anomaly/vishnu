@@ -157,6 +157,10 @@ class Config(object):
     def timeout(self):
         return self._timeout
 
+    @timeout.setter
+    def timeout(self, value):
+        self._timeout = value
+
     @property
     def backend(self):
         """
