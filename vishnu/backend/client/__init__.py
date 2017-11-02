@@ -50,11 +50,11 @@ class Base(object):
         self._last_accessed = value
 
     def get(self, key):
-        self.last_accessed = datetime.now()
+        self.last_accessed = datetime.utcnow()
         return self._data.get(key)
 
     def __setitem__(self, key, value):
-        self.last_accessed = datetime.now()
+        self.last_accessed = datetime.utcnow()
         self._data[key] = value
 
     @abc.abstractmethod

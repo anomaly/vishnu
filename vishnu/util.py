@@ -11,7 +11,7 @@ def gae_ndb_delete_expired_sessions(dormant_for=86400, limit=500):
     from datetime import datetime
     from datetime import timedelta
 
-    now = datetime.now()
+    now = datetime.utcnow()
     last_accessed = now - timedelta(seconds=dormant_for)
 
     query = VishnuSession.query(ndb.OR(

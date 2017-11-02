@@ -246,7 +246,7 @@ class Session(object):
         """Calculates the session expiry using the timeout"""
         self._backend_client.expires = None
 
-        now = datetime.now()
+        now = datetime.utcnow()
         self._backend_client.expires = now + timedelta(seconds=self._config.timeout)
 
     def _load_cookie(self):
