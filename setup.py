@@ -51,7 +51,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "future",
-        "pycrypto==2.6.1"
+        "pycryptodome>=3.6.0,<3.7.0"
     ],
     tests_require=[
         'pytest',
