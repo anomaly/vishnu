@@ -93,7 +93,7 @@ The following parameters are available for session configuration.
 +-----------------+----------+--------------+---------+-------------------------------------------------------------------------------------------------------+
 | ``path``        | no       | ``/``        | string  | The path to set the cookie for, if omitted it will default to ``/``                                   |
 +-----------------+----------+--------------+---------+-------------------------------------------------------------------------------------------------------+
-| ``http_only``   | no       | ``True``     | string  | Only allow cookies access via HTTP/HTTPS                                                              |
+| ``http_only``   | no       | ``True``     | string  | A http-only cookie cannot be accessed by client-side APIs, such as JavaScript                         |                                     |
 +-----------------+----------+--------------+---------+-------------------------------------------------------------------------------------------------------+
 | ``auto_save``   | no       | ``False``    | bool    | Automatically save the session when a value is set.                                                   |
 +-----------------+----------+--------------+---------+-------------------------------------------------------------------------------------------------------+
