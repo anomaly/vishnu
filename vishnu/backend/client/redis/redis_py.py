@@ -3,7 +3,7 @@ Client wrapper for python redis library
 https://pypi.python.org/pypi/redis
 """
 from vishnu.backend.client import Base
-from vishnu.backend.client import PicklableSession
+from vishnu.backend.client import PickleableSession
 
 import pickle
 import redis
@@ -47,7 +47,7 @@ class Client(Base):
 
         # todo: implement sync only
 
-        self._record = PicklableSession(
+        self._record = PickleableSession(
             self._expires,
             self._last_accessed,
             self._data

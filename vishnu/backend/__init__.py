@@ -9,3 +9,6 @@ from vishnu.backend.config.redis.redis_py import Config as Redis
 
 # NDB
 from vishnu.backend.config.ndb.gae import Config as GoogleAppEngineNDB
+
+# datastore
+from vishnu.backend.config.google_cloud_datastore import Config as GoogleCloudDatastore

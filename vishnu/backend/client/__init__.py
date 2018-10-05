@@ -2,7 +2,7 @@ import abc
 from datetime import datetime
 
 
-class PicklableSession(object):
+class PickleableSession(object):
 
     def __init__(self, expires, last_accessed, data):
         self._expires = expires

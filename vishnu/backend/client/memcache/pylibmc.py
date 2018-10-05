@@ -5,7 +5,7 @@ http://sendapatch.se/projects/pylibmc/
 from __future__ import absolute_import
 
 from vishnu.backend.client import Base
-from vishnu.backend.client import PicklableSession
+from vishnu.backend.client import PickleableSession
 
 import pickle
 from pylibmc import Client as PylibmcClient
@@ -48,7 +48,7 @@ class Client(Base):
 
         # todo: implement sync only
 
-        self._record = PicklableSession(
+        self._record = PickleableSession(
             self._expires,
             self._last_accessed,
             self._data

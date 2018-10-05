@@ -4,7 +4,7 @@ https://pypi.python.org/pypi/python-memcached
 """
 
 from vishnu.backend.client import Base
-from vishnu.backend.client import PicklableSession
+from vishnu.backend.client import PickleableSession
 
 import memcache
 import pickle
@@ -47,7 +47,7 @@ class Client(Base):
 
         # todo: implement sync only
 
-        self._record = PicklableSession(
+        self._record = PickleableSession(
             self._expires,
             self._last_accessed,
             self._data

@@ -55,11 +55,14 @@ setup(
     ],
     tests_require=[
         'pytest',
+        'pytest-cov',
+        'google-cloud-datastore',
         'redis',
         'pylibmc',
         'pymemcache',
         'python-memcached',
         'falcon',
+        'unittest',
         'webtest'
     ],
     setup_requires=['pytest-runner'],
@@ -69,5 +72,6 @@ setup(
         'pymemcache': ['pymemcache'],
         'python-memcached': ['python-memcached'],
         'redis': ['redis'],
+        'datastore': ['google-cloud-datastore']
     }
 )

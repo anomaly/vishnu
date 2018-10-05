@@ -13,5 +13,5 @@ class Config(Base):
     """
 
     def client_from_config(self, sid):
-        from vishnu.backend.client.memcache.gae import Client
+        from vishnu.backend.client.google_app_engine_memcache import Client
         return Client(sid)

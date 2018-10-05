@@ -6,7 +6,7 @@ def gae_ndb_delete_expired_sessions(dormant_for=86400, limit=500):
        to 24 hours.
        limit: amount to delete in one call of the method, the maximum
        and default for this is the NDB fetch limit of 500"""
-    from vishnu.backend.client.ndb.gae import VishnuSession
+    from vishnu.backend.client.google_app_engine_ndb import VishnuSession
     from google.appengine.ext import ndb
     from datetime import datetime
     from datetime import timedelta

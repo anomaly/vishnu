@@ -13,5 +13,5 @@ class Config(Base):
     """
 
     def client_from_config(self, sid):
-        from vishnu.backend.client.ndb.gae import Client
+        from vishnu.backend.client.google_app_engine_ndb import Client
         return Client(sid)

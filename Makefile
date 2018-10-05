@@ -18,6 +18,10 @@ test:
 tests:
 	tox
 
+.PHONY: coverage
+coverage:
+	py.test --cov-report term-missing:skip-covered --cov=vishnu tests
+
 .PHONY: dist
 dist:
 	$(PYTHON27) setup.py sdist bdist_wheel
