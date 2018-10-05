@@ -62,7 +62,6 @@ setup(
         'pymemcache',
         'python-memcached',
         'falcon',
-        'unittest',
         'webtest'
     ],
     setup_requires=['pytest-runner'],
