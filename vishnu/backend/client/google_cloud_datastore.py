@@ -5,6 +5,8 @@ https://cloud.google.com/datastore
 from google.cloud import datastore
 from vishnu.backend.client import Base
 
+TABLE_NAME = "VishnuSession"
+
 
 class Client(Base):
     """
@@ -15,7 +17,7 @@ class Client(Base):
         super(Client, self).__init__(sid)
 
         self._client = datastore.Client()
-        self._key = self._client.key('VishnuSession', self._sid)
+        self._key = self._client.key(TABLE_NAME, self._sid)
 
     def load(self):
         if not self._loaded:
