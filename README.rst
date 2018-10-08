@@ -28,6 +28,7 @@ Features
 - Support for multiple backends
     - `Google App Engine Memcache <https://cloud.google.com/appengine/docs/standard/python/memcache/>`__
     - `Google App Engine NDB <https://cloud.google.com/appengine/docs/standard/python/ndb/>`__
+    - `Google Cloud Datastore <https://cloud.google.com/datastore/docs/concepts/overview>`__
     - `Python Memcached <https://pypi.python.org/pypi/python-memcached>`__
     - `PyMemcache <https://pypi.python.org/pypi/pymemcache>`__
     - `Redis <https://pypi.python.org/pypi/redis>`__
@@ -52,6 +53,7 @@ The following extra installations also exist which include the desired backend l
     pip install vishnu[pymemcache]
     pip install vishnu[python-memcached]
     pip install vishnu[redis]
+    pip install vishnu[datastore]
 
 If you are working with Google App Engine we recommend installation via `pip` as a `vendored package <https://cloud.google.com/appengine/docs/standard/python/tools/using-libraries-python-27>`__.
 
