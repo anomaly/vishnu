@@ -5,7 +5,6 @@ from vishnu.session import Session
 from vishnu.backend import PythonMemcached
 
 
-@pytest.fixture
 def memcache_client(sid=None):
 
     if sid is None:

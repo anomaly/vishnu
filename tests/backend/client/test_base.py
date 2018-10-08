@@ -6,28 +6,28 @@ class BaseClient(unittest.TestCase):
     def test_init(self):
         from vishnu.backend.client import Base
         base = Base(sid="sid")
-        self.assertEquals(base.expires, None)
-        self.assertEquals(base.last_accessed, None)
+        self.assertEqual(base.expires, None)
+        self.assertEqual(base.last_accessed, None)
 
     def test_expires(self):
         from datetime import datetime
         from vishnu.backend.client import Base
         base = Base(sid="sid")
-        self.assertEquals(base.expires, None)
+        self.assertEqual(base.expires, None)
 
         expires = datetime(2018, 1, 1, 10, 0, 0)
         base.expires = expires
-        self.assertEquals(base.expires, expires)
+        self.assertEqual(base.expires, expires)
 
     def test_last_accessed(self):
         from datetime import datetime
         from vishnu.backend.client import Base
         base = Base(sid="sid")
-        self.assertEquals(base.last_accessed, None)
+        self.assertEqual(base.last_accessed, None)
 
         last_accessed = datetime(2018, 1, 2, 11, 0, 0)
         base.last_accessed = last_accessed
-        self.assertEquals(base.last_accessed, last_accessed)
+        self.assertEqual(base.last_accessed, last_accessed)
 
     def test_get_and_set_of_data(self):
         pass
@@ -47,9 +47,9 @@ class BaseClient(unittest.TestCase):
         base["key"] = "value"
 
         base.clear()
-        self.assertEquals(base.expires, None)
-        self.assertEquals(base.last_accessed, None)
-        self.assertEquals(base["key"], None)
+        self.assertEqual(base.expires, None)
+        self.assertEqual(base.last_accessed, None)
+        self.assertEqual(base["key"], None)
 
     def test_save_raises_not_implemented_error(self):
         from vishnu.backend.client import Base

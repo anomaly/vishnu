@@ -16,9 +16,9 @@ class PickleableSession(unittest.TestCase):
             last_accessed=last_accessed,
             data=data
         )
-        self.assertEquals(ps.expires, expires)
-        self.assertEquals(ps.last_accessed, last_accessed)
-        self.assertEquals(ps.data, data)
+        self.assertEqual(ps.expires, expires)
+        self.assertEqual(ps.last_accessed, last_accessed)
+        self.assertEqual(ps.data, data)
 
     def test_can_pickle(self):
         pass

@@ -1,8 +1,8 @@
-from ..middleware import test_app
 
 
 def test_manual_save():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=True, backend=PyMemcache())
 
     # check public before login
@@ -40,6 +40,7 @@ def test_manual_save():
 
 def test_auto_save():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=True, auto_save=True, backend=PyMemcache())
 
     # check public before login
@@ -78,6 +79,7 @@ def test_auto_save():
 def test_default_cookie_name():
     from vishnu.backend import PyMemcache
     from vishnu.session import DEFAULT_COOKIE_NAME
+    from ..middleware import test_app
     app = test_app(use_https=True, backend=PyMemcache())
 
     # check public before login
@@ -116,6 +118,7 @@ def test_default_cookie_name():
 
 def test_custom_cookie_name():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     custom_cookie_name = "my-cookie-name"
     app = test_app(use_https=True, cookie_name=custom_cookie_name, backend=PyMemcache())
 
@@ -155,6 +158,7 @@ def test_custom_cookie_name():
 
 def test_encrypted():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=True, encrypt=True, backend=PyMemcache())
 
     # check public before login
@@ -192,6 +196,7 @@ def test_encrypted():
 
 def test_unencrypted():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=True, encrypt=False, backend=PyMemcache())
 
     # check public before login
@@ -229,6 +234,7 @@ def test_unencrypted():
 
 def test_insecure_http():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=False, secure=False, backend=PyMemcache())
 
     # check public before login
@@ -266,6 +272,7 @@ def test_insecure_http():
 
 def test_secure_https():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=True, secure=True, backend=PyMemcache())
 
     # check public before login
@@ -303,6 +310,7 @@ def test_secure_https():
 
 def test_secure_http():
     from vishnu.backend import PyMemcache
+    from ..middleware import test_app
     app = test_app(use_https=False, secure=True, backend=PyMemcache())
 
     # check public before login

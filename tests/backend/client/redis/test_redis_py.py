@@ -1,9 +1,7 @@
-import pytest
-
 from vishnu.session import Session
 from vishnu.backend import Redis
 
-@pytest.fixture
+
 def redis_client(sid=None):
 
     if sid is None:

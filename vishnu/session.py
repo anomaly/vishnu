@@ -86,7 +86,7 @@ class Config(object):
                 raise TypeError("timeout must be a non-negative integer")
 
         if backend is None or not isinstance(backend, BackendConfig):
-            raise TypeError("unknown backend configuration received")
+            raise TypeError("unknown backend configuration received %s" % backend)
         self._backend = backend
 
     @property

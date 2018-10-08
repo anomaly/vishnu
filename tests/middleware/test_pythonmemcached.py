@@ -1,12 +1,11 @@
 import pytest
 import sys
 
-from ..middleware import test_app
-
 
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_manual_save():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=True, backend=PythonMemcached())
 
     # check public before login
@@ -45,6 +44,7 @@ def test_manual_save():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_auto_save():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=True, auto_save=True, backend=PythonMemcached())
 
     # check public before login
@@ -84,6 +84,7 @@ def test_auto_save():
 def test_default_cookie_name():
     from vishnu.backend import PythonMemcached
     from vishnu.session import DEFAULT_COOKIE_NAME
+    from ..middleware import test_app
     app = test_app(use_https=True, backend=PythonMemcached())
 
     # check public before login
@@ -123,6 +124,7 @@ def test_default_cookie_name():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_custom_cookie_name():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     custom_cookie_name = "my-cookie-name"
     app = test_app(use_https=True, cookie_name=custom_cookie_name, backend=PythonMemcached())
 
@@ -163,6 +165,7 @@ def test_custom_cookie_name():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_encrypted():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=True, encrypt=True, backend=PythonMemcached())
 
     # check public before login
@@ -201,6 +204,7 @@ def test_encrypted():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_unencrypted():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=True, encrypt=False, backend=PythonMemcached())
 
     # check public before login
@@ -239,6 +243,7 @@ def test_unencrypted():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_insecure_http():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=False, secure=False, backend=PythonMemcached())
 
     # check public before login
@@ -277,6 +282,7 @@ def test_insecure_http():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_secure_https():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=True, secure=True, backend=PythonMemcached())
 
     # check public before login
@@ -315,6 +321,7 @@ def test_secure_https():
 @pytest.mark.skipif(sys.version_info > (3, 0), reason="python-memcached is not supported under python3")
 def test_secure_http():
     from vishnu.backend import PythonMemcached
+    from ..middleware import test_app
     app = test_app(use_https=False, secure=True, backend=PythonMemcached())
 
     # check public before login

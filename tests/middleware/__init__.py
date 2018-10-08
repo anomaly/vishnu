@@ -58,12 +58,12 @@ class LogoutHandler(BaseHandler):
         resp.status = falcon.HTTP_200
 
 
-@pytest.fixture
 def test_app(cookie_name=None, encrypt=False, auto_save=False,
              secure=True, domain=None, path=None,
              use_https=False, backend=None):
     from webtest import TestApp
     from vishnu.middleware import SessionMiddleware
+    from vishnu.session import Config
 
     api = falcon.API()
     api.add_route("/private", PrivateHandler())
@@ -76,7 +76,7 @@ def test_app(cookie_name=None, encrypt=False, auto_save=False,
     if encrypt:
         encrypt_key = "YTWRsQIU4lYj4HyP33Uh24nrraDFv0R9"
 
-    config = vishnu.session.Config(
+    config = Config(
         secret="OVc1Mbt79AK5Pmi6sWnJnXZvEPNO3BnI",
         cookie_name=cookie_name,
         encrypt_key=encrypt_key,

@@ -2,16 +2,8 @@
 Client wrapper for Google Cloud Datastore
 https://cloud.google.com/datastore
 """
-from vishnu.backend.client import Base
-
 from google.cloud import datastore
-#
-#
-# class VishnuSession(ndb.Model):  # pylint: disable=R0903, W0232
-#     """NDB model for storing session"""
-#     expires = ndb.DateTimeProperty(required=False)
-#     last_accessed = ndb.DateTimeProperty(required=True)
-#     data = ndb.PickleProperty(required=True, compressed=True)
+from vishnu.backend.client import Base
 
 
 class Client(Base):
@@ -55,9 +47,9 @@ class Client(Base):
         entity = datastore.Entity(key=self._key)
         entity["last_accessed"] = self.last_accessed
 
-        if not sync_only:
-            entity["data"] = self._data
-            if self.expires:
-                entity["expires"] = self.expires
+        # todo: restore sync only
+        entity["data"] = self._data
+        if self.expires:
+            entity["expires"] = self.expires
 
         self._client.put(entity)

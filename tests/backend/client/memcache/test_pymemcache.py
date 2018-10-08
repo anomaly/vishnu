@@ -1,10 +1,7 @@
-import pytest
-
 from vishnu.session import Session
 from vishnu.backend import PyMemcache
 
 
-@pytest.fixture
 def memcache_client(sid=None):
 
     if sid is None:
