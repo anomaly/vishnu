@@ -1,8 +1,8 @@
 vishnu
 ======
 
-::
-  Cookies are largely obsolete. For newer application consider using technologies like JWT which will also eliminate the need for shared backends for session storage. We have moved all our projects to use JWT and the likes and are no longer maintaining this project.
+
+**Disclaimer:**  Cookies are largely obsolete. For newer application consider using technologies like JWT which will also eliminate the need for shared backends for session storage. We have moved all our projects to use JWT and the likes and are no longer maintaining this project.
 
 Sessions for python WSGI applications.
 
